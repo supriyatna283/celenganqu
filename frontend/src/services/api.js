@@ -1,0 +1,24 @@
+import axios from 'axios';
+import { useAuthStore } from '../store/authStore';
+
+const api = axios.create({
+  baseURL: 'http://localhost:5000/v1',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const accessToken = useAuthStore.getState().accessToken;
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export default api;
