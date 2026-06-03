@@ -35,6 +35,12 @@ export const useAuthStore = create((set) => ({
     set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
   },
 
+  setTokens: (accessToken, refreshToken) => {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    set({ accessToken, refreshToken });
+  },
+
   initializeAuth: () => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');

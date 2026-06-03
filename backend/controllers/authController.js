@@ -115,3 +115,38 @@ exports.login = async (req, res) => {
     return res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
   }
 };
+
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'Refresh token tidak ditemukan.' });
+    }
+
+    // Verify the refresh token
+    const jwt = require('jsonwebtoken');
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: 'Refresh token tidak valid atau kedaluwarsa.' });
+      }
+
+      // Find user
+      const user = await User.findOne({ where: { uuid: decoded.uuid } });
+      if (!user || !user.is_active) {
+        return res.status(403).json({ message: 'User tidak valid atau dinonaktifkan.' });
+      }
+
+      // Generate new tokens
+      const newAccessToken = generateAccessToken(user);
+      const newRefreshToken = generateRefreshToken(user);
+
+      return res.status(200).json({
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      });
+    });
+  } catch (error) {
+    console.error('Refresh token error:', error);
+    return res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
+  }
+};
