@@ -54,9 +54,6 @@ export default function Login() {
         
         {/* Logo/Header */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 mb-4 transform hover:rotate-12 transition-transform duration-300 flex items-center justify-center">
-            <img src={logoImg} className="w-full h-full object-contain" alt="CelenganQu Logo" />
-          </div>
           <h2 className="text-4xl font-black font-outfit text-slate-900 dark:text-white tracking-tight font-outfit">
             Celengan<span className="text-primary-light font-medium">Qu</span>
           </h2>
