@@ -92,10 +92,21 @@ exports.processChatMessage = async (req, res) => {
 
     // If intent is log_transaction, we actually save it to DB
     if (aiResponse.intent === 'log_transaction' && aiResponse.transaction_data) {
-      const { type, amount, account_id, category, description } = aiResponse.transaction_data;
+      let { type, amount, account_id, category, description } = aiResponse.transaction_data;
 
-      // Basic validation
-      if (account_id) {
+      // AI seringkali gagal menentukan account_id jika pengguna tidak menyebutkannya.
+      // Solusi: Gunakan akun pertama sebagai default jika account_id kosong.
+      if (!account_id && allAccounts.length > 0) {
+        account_id = allAccounts[0].id;
+      }
+
+      // Pastikan category terisi, jika tidak fallback ke 'Lainnya'
+      if (!category) {
+        category = 'Lainnya';
+      }
+
+      // HANYA simpan jika amount adalah angka yang valid dan account_id ada
+      if (account_id && amount && !isNaN(amount)) {
         const txDate = new Date().toISOString().split('T')[0];
 
         // Use the existing logic to create transaction
@@ -103,9 +114,9 @@ exports.processChatMessage = async (req, res) => {
           user_id: req.user.id,
           account_id,
           type: type || 'expense',
-          amount,
+          amount: parseFloat(amount),
           category,
-          description,
+          description: description || 'Transaksi via AI',
           transaction_date: txDate
         });
 
