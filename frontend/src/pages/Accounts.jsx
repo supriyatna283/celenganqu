@@ -9,13 +9,13 @@ import EmptyState from '../components/EmptyState';
 
 export default function Accounts() {
   const { confirm } = useConfirmStore();
-  const { 
-    accounts, 
-    fetchAccounts, 
-    createAccount, 
-    updateAccount, 
-    deleteAccount, 
-    shareAccount, 
+  const {
+    accounts,
+    fetchAccounts,
+    createAccount,
+    updateAccount,
+    deleteAccount,
+    shareAccount,
     loadingAccounts,
     hideNominal
   } = useFinanceStore();
@@ -29,7 +29,7 @@ export default function Accounts() {
   const [type, setType] = useState('savings');
   const [balance, setBalance] = useState('');
   const [color, setColor] = useState('#1A56A0');
-  
+
   // Share Form Fields
   const [shareEmail, setShareEmail] = useState('');
   const [shareRole, setShareRole] = useState('editor');
@@ -316,9 +316,8 @@ export default function Accounts() {
                         key={c}
                         type="button"
                         onClick={() => setColor(c)}
-                        className={`w-8 h-8 rounded-full border-2 transition-all ${
-                          color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
-                        }`}
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
+                          }`}
                         style={{ backgroundColor: c }}
                       />
                     ))}
@@ -371,7 +370,7 @@ export default function Accounts() {
 
               <form onSubmit={handleShare} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Email Pengguna Duitku</label>
+                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Email Pengguna CelenganQu</label>
                   <input
                     type="email"
                     placeholder="misal: istri@email.com"
