@@ -16,7 +16,8 @@ export default function Dashboard() {
     fetchInsights,
     loadingAccounts,
     loadingTransactions,
-    loadingInsights
+    loadingInsights,
+    hideNominal
   } = useFinanceStore();
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export default function Dashboard() {
 
   // Helper to format currency to IDR
   const formatIDR = (value) => {
+    if (hideNominal) return 'Rp ••••••••';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',

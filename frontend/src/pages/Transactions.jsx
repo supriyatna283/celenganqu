@@ -55,7 +55,8 @@ export default function Transactions() {
     toggleRecurringTemplate,
     scanReceipt,
     exportCSV,
-    importCSV
+    importCSV,
+    hideNominal
   } = useFinanceStore();
 
   const [activeTab, setActiveTab] = useState('history'); // 'history' or 'recurring'
@@ -319,6 +320,7 @@ export default function Transactions() {
   };
 
   const formatIDR = (value) => {
+    if (hideNominal) return 'Rp ••••••••';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',

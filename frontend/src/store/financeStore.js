@@ -23,6 +23,14 @@ export const useFinanceStore = create((set, get) => ({
   loadingInsights: false,
   error: null,
 
+  // Global UI State
+  hideNominal: localStorage.getItem('hideNominal') === 'true',
+  toggleHideNominal: () => set((state) => {
+    const newValue = !state.hideNominal;
+    localStorage.setItem('hideNominal', newValue);
+    return { hideNominal: newValue };
+  }),
+
   // Selected filters for transactions
   filters: {
     accountId: '',

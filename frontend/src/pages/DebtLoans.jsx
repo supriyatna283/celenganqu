@@ -17,7 +17,8 @@ export default function DebtLoans() {
     createDebtLoan, 
     payDebtLoan, 
     deleteDebtLoan, 
-    loadingDebtsLoans 
+    loadingDebtsLoans,
+    hideNominal
   } = useFinanceStore();
 
   const [activeTab, setActiveTab] = useState('debt'); // 'debt' or 'loan'
@@ -151,6 +152,7 @@ export default function DebtLoans() {
   };
 
   const formatIDR = (value) => {
+    if (hideNominal) return 'Rp ••••••••';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',

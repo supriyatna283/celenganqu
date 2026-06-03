@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { useFinanceStore } from '../store/financeStore';
 import { 
   Wallet, 
   LayoutDashboard, 
@@ -17,7 +18,9 @@ import {
   Handshake,
   Calendar,
   Bot,
-  Plus
+  Plus,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import AIChatbot from './AIChatbot';
@@ -25,6 +28,7 @@ import ConfirmModal from './ConfirmModal';
 
 export default function Layout({ children }) {
   const { user, logout, isAuthenticated, initializeAuth } = useAuthStore();
+  const { hideNominal, toggleHideNominal } = useFinanceStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -105,24 +109,27 @@ export default function Layout({ children }) {
 
         {/* Bottom Panel (Theme Toggle, User Info, Logout) */}
         <div className="border-t border-slate-200 dark:border-slate-800 pt-6 mt-6 flex flex-col space-y-4">
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-550 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white transition-all"
-          >
-            {theme === 'light' ? (
-              <>
-                <Moon className="w-5 h-5 text-indigo-500" />
-                <span>Mode Gelap</span>
-              </>
-            ) : (
-              <>
-                <Sun className="w-5 h-5 text-amber-500" />
-                <span>Mode Terang</span>
-              </>
-            )}
-          </button>
-          
+          {/* Controls: Theme & Hide Nominal */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="flex-1 flex items-center justify-center space-x-2 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-550 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white transition-all"
+              title="Ganti Tema"
+            >
+              {theme === 'light' ? <Moon className="w-5 h-5 text-indigo-500" /> : <Sun className="w-5 h-5 text-amber-500" />}
+            </button>
+            <button
+              onClick={toggleHideNominal}
+              className={`flex-1 flex items-center justify-center space-x-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                hideNominal 
+                  ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-light' 
+                  : 'text-slate-550 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Sembunyikan Saldo"
+            >
+              {hideNominal ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
           <div className="flex items-center justify-center p-2 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800">
             <NotificationBell />
           </div>
@@ -163,6 +170,16 @@ export default function Layout({ children }) {
             </div>
           </div>
           <div className="flex items-center space-x-2">
+            <button
+              onClick={toggleHideNominal}
+              className={`p-2 rounded-full transition-colors ${
+                hideNominal 
+                  ? 'text-primary bg-primary/10 dark:text-primary-light dark:bg-primary/20' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              {hideNominal ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
             <button
               onClick={toggleTheme}
               className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"

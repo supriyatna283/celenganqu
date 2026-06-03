@@ -19,7 +19,7 @@ import EmptyState from '../components/EmptyState';
 
 export default function Subscriptions() {
   const { confirm } = useConfirmStore();
-  const { recurrings, fetchRecurrings, toggleRecurring, deleteRecurring, loadingRecurrings } = useFinanceStore();
+  const { recurrings, fetchRecurrings, toggleRecurring, deleteRecurring, loadingRecurrings, hideNominal } = useFinanceStore();
   
   useEffect(() => {
     fetchRecurrings();
@@ -47,6 +47,7 @@ export default function Subscriptions() {
   };
 
   const formatIDR = (value) => {
+    if (hideNominal) return 'Rp ••••••••';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',

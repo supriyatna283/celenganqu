@@ -19,7 +19,8 @@ export default function Goals() {
     updateGoal,
     deleteGoal,
     depositToGoal,
-    loadingGoals
+    loadingGoals,
+    hideNominal
   } = useFinanceStore();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -183,6 +184,7 @@ export default function Goals() {
   };
 
   const formatIDR = (value) => {
+    if (hideNominal) return 'Rp ••••••••';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',

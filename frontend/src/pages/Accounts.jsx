@@ -9,7 +9,16 @@ import EmptyState from '../components/EmptyState';
 
 export default function Accounts() {
   const { confirm } = useConfirmStore();
-  const { accounts, fetchAccounts, createAccount, updateAccount, deleteAccount, shareAccount, loadingAccounts } = useFinanceStore();
+  const { 
+    accounts, 
+    fetchAccounts, 
+    createAccount, 
+    updateAccount, 
+    deleteAccount, 
+    shareAccount, 
+    loadingAccounts,
+    hideNominal
+  } = useFinanceStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
@@ -117,6 +126,7 @@ export default function Accounts() {
   };
 
   const formatIDR = (value) => {
+    if (hideNominal) return 'Rp ••••••••';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',

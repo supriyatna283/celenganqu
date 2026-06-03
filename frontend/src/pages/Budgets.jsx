@@ -9,7 +9,7 @@ import EmptyState from '../components/EmptyState';
 
 export default function Budgets() {
   const { confirm } = useConfirmStore();
-  const { budgets, fetchBudgets, createBudget, updateBudget, deleteBudget, copyPreviousBudgets, loadingBudgets, categories, fetchCategories } = useFinanceStore();
+  const { budgets, fetchBudgets, createBudget, updateBudget, deleteBudget, copyPreviousBudgets, loadingBudgets, categories, fetchCategories, hideNominal } = useFinanceStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
   const [copying, setCopying] = useState(false);
@@ -112,6 +112,7 @@ export default function Budgets() {
   };
 
   const formatIDR = (value) => {
+    if (hideNominal) return 'Rp ••••••••';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
