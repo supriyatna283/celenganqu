@@ -89,21 +89,35 @@ exports.processChatMessage = async (req, res) => {
     });
 
     const aiResponse = JSON.parse(chatCompletion.choices[0].message.content);
+    console.log("AI Response:", aiResponse);
 
     // If intent is log_transaction, we actually save it to DB
     if (aiResponse.intent === 'log_transaction' && aiResponse.transaction_data) {
       let { type, amount, account_id, category, description } = aiResponse.transaction_data;
+      
+      console.log("Extracted Data:", { type, amount, account_id, category, description });
 
       // AI seringkali gagal menentukan account_id jika pengguna tidak menyebutkannya.
       // Solusi: Gunakan akun pertama sebagai default jika account_id kosong.
       if (!account_id && allAccounts.length > 0) {
         account_id = allAccounts[0].id;
+        console.log("Applied fallback account_id:", account_id);
       }
 
       // Pastikan category terisi, jika tidak fallback ke 'Lainnya'
       if (!category) {
         category = 'Lainnya';
+        console.log("Applied fallback category:", category);
       }
+
+      // Bersihkan format angka jika AI mengirimkan string seperti "50.000", "50,000", atau "Rp50000"
+      if (typeof amount === 'string') {
+        // Hapus semua karakter selain angka (menghapus titik, koma, Rp, spasi)
+        // Pengecualian jika AI benar-benar mengirim desimal (sangat jarang untuk IDR)
+        amount = amount.replace(/[^0-9]/g, ''); 
+      }
+
+      console.log("Processed Data before save:", { account_id, amount, isNaN_amount: isNaN(amount) });
 
       // HANYA simpan jika amount adalah angka yang valid dan account_id ada
       if (account_id && amount && !isNaN(amount)) {
@@ -119,6 +133,8 @@ exports.processChatMessage = async (req, res) => {
           description: description || 'Transaksi via AI',
           transaction_date: txDate
         });
+        
+        console.log("Transaction successfully saved to DB!");
 
         // Update balance (simple inline update for AI, ideally we reuse transactionController's logic)
         const account = await Account.findByPk(account_id);
@@ -127,6 +143,8 @@ exports.processChatMessage = async (req, res) => {
           else if (type === 'expense') account.balance = parseFloat(account.balance) - parseFloat(amount);
           await account.save();
         }
+      } else {
+        console.log("Transaction creation skipped due to validation failure.");
       }
     }
 
