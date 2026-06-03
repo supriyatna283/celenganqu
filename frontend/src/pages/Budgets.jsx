@@ -201,14 +201,14 @@ export default function Budgets() {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-white">{b.category}</h3>
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">{b.category}</h3>
                       <span className="text-xs text-slate-500 block mt-0.5">Bulan Ini</span>
                     </div>
 
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => openEditModal(b)}
-                        className="p-2 text-slate-400 hover:text-white bg-slate-800/40 rounded-lg hover:bg-slate-800 transition-colors"
+                        className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-slate-800 dark:hover:text-white bg-slate-100 dark:bg-slate-800/40 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 rounded-lg hover:bg-slate-800 transition-colors"
                         title="Edit Budget"
                       >
                         <Edit3 className="w-4 h-4" />
@@ -238,7 +238,7 @@ export default function Budgets() {
                   <div className="flex justify-between items-end mt-4 pt-4 border-t border-slate-800/50">
                     <div>
                       <span className="text-[10px] text-slate-500 block uppercase font-semibold">Telah Dibelanjakan</span>
-                      <span className="text-base font-bold text-white">{formatIDR(spent)}</span>
+                      <span className="text-base font-bold text-slate-900 dark:text-white">{formatIDR(spent)}</span>
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] text-slate-500 block uppercase font-semibold">Limit Anggaran</span>
@@ -267,7 +267,7 @@ export default function Budgets() {
             <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
               <button
                 onClick={() => setModalOpen(false)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-white"
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-800 dark:hover:text-white"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -289,7 +289,7 @@ export default function Budgets() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                       required
                     >
                       {categoriesList.map(cat => (
@@ -306,7 +306,7 @@ export default function Budgets() {
                     placeholder="misal: 1000000"
                     value={formatRupiahInput(amountLimit)}
                     onChange={handleAmountLimitChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>

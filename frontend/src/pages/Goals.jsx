@@ -232,7 +232,7 @@ export default function Goals() {
                   <div>
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="text-xl font-bold text-white truncate max-w-[180px]">{g.name}</h3>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-[180px]">{g.name}</h3>
                         {g.target_date && (
                           <span className="text-[10px] text-slate-500 flex items-center space-x-1 mt-1">
                             <Calendar className="w-3.5 h-3.5" />
@@ -244,7 +244,7 @@ export default function Goals() {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => openEditModal(g)}
-                          className="p-2 text-slate-400 hover:text-white bg-slate-800/40 rounded-lg hover:bg-slate-800 transition-colors"
+                          className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-slate-800 dark:hover:text-white bg-slate-100 dark:bg-slate-800/40 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 rounded-lg hover:bg-slate-800 transition-colors"
                           title="Edit"
                         >
                           <Edit3 className="w-4 h-4" />
@@ -274,7 +274,7 @@ export default function Goals() {
                           }}
                         />
                       </div>
-                      <span className="text-xl font-bold text-white block mt-2">
+                      <span className="text-xl font-bold text-slate-900 dark:text-white block mt-2">
                         {formatIDR(current)}
                       </span>
                     </div>
@@ -308,7 +308,7 @@ export default function Goals() {
             <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
               <button
                 onClick={() => setModalOpen(false)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-white"
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-800 dark:hover:text-white"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -331,7 +331,7 @@ export default function Goals() {
                     placeholder="misal: Beli Motor, Dana Darurat"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -343,7 +343,7 @@ export default function Goals() {
                     placeholder="0"
                     value={formatRupiahInput(targetAmount)}
                     onChange={handleTargetAmountChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -354,7 +354,7 @@ export default function Goals() {
                     type="date"
                     value={targetDate}
                     onChange={(e) => setTargetDate(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                   />
                 </div>
 
@@ -400,7 +400,7 @@ export default function Goals() {
             <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
               <button
                 onClick={() => setDepositModalOpen(false)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-white"
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-800 dark:hover:text-white"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -420,7 +420,7 @@ export default function Goals() {
                   <select
                     value={sourceAccountId}
                     onChange={(e) => setSourceAccountId(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   >
                     {accounts.map(acc => (
@@ -436,7 +436,7 @@ export default function Goals() {
                     placeholder="0"
                     value={formatRupiahInput(depositAmount)}
                     onChange={handleDepositAmountChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>

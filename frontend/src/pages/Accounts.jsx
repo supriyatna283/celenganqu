@@ -198,28 +198,28 @@ export default function Accounts() {
                         </>
                       )}
                     </span>
-                    <h3 className="text-xl font-bold mt-1 text-white truncate max-w-[180px]">{acc.name}</h3>
+                    <h3 className="text-xl font-bold mt-1 text-slate-900 dark:text-white truncate max-w-[180px]">{acc.name}</h3>
                   </div>
 
                   {!acc.is_shared && (
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => openShareModal(acc.id)}
-                        className="p-2 text-indigo-400 hover:text-white bg-indigo-500/10 rounded-lg hover:bg-indigo-500/30 transition-colors"
+                        className="p-2 text-indigo-500 dark:text-indigo-400 hover:text-white bg-indigo-50 dark:bg-indigo-500/10 rounded-lg hover:bg-indigo-500 dark:hover:bg-indigo-500/30 transition-colors"
                         title="Bagikan Akun"
                       >
                         <UserPlus className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => openEditModal(acc)}
-                        className="p-2 text-slate-400 hover:text-white bg-slate-800/40 rounded-lg hover:bg-slate-800 transition-colors"
+                        className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
                         title="Edit Akun"
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(acc.id)}
-                        className="p-2 text-slate-400 hover:text-red-400 bg-slate-800/40 rounded-lg hover:bg-red-500/10 transition-colors"
+                        className="p-2 text-slate-400 hover:text-red-500 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                         title="Hapus Akun"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -230,7 +230,7 @@ export default function Accounts() {
 
                 <div className="mt-8">
                   <span className="text-xs text-slate-500 block uppercase font-semibold">Saldo Saat Ini</span>
-                  <span className="text-2xl font-black text-white mt-1 block tracking-tight">
+                  <span className="text-2xl font-black text-slate-900 dark:text-white mt-1 block tracking-tight">
                     {formatIDR(acc.balance)}
                   </span>
                 </div>
