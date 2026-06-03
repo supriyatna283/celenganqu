@@ -164,7 +164,7 @@ export default function Dashboard() {
           <div className="flex items-center space-x-3">
             <Link
               to="/transactions"
-              className="bg-[#1A56A0] hover:bg-[#164882] text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-[#1A56A0]/20 transition-all duration-200"
+              className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Transaksi</span>
@@ -175,10 +175,10 @@ export default function Dashboard() {
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Total Saldo */}
-          <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur border border-slate-150 dark:border-slate-800 p-6 rounded-3xl relative overflow-hidden group hover:border-[#1A56A0] dark:hover:border-[#1A56A0] transition-all duration-300">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#1A56A0]/5 rounded-bl-[100px] pointer-events-none group-hover:bg-[#1A56A0]/10 transition-colors duration-300" />
+          <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur border border-slate-150 dark:border-slate-800 p-6 rounded-3xl relative overflow-hidden group hover:border-primary dark:hover:border-primary transition-all duration-300">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-300" />
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-[#1A56A0]/10 text-[#1A56A0] dark:text-[#D6E4F7] rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary/10 text-primary dark:text-primary-light rounded-xl flex items-center justify-center">
                 <Wallet className="w-5 h-5" />
               </div>
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Saldo Aset</span>
@@ -406,7 +406,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 bg-white/70 dark:bg-slate-900/40 border border-slate-150 dark:border-slate-800 p-6 rounded-3xl">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">Transaksi Terakhir</h2>
-              <Link to="/transactions" className="text-xs text-[#1A56A0] dark:text-[#D6E4F7] hover:underline">Semua Transaksi</Link>
+              <Link to="/transactions" className="text-xs text-primary dark:text-primary-light hover:underline">Semua Transaksi</Link>
             </div>
             <div className="space-y-3">
               {loadingTransactions ? (
@@ -414,7 +414,7 @@ export default function Dashboard() {
               ) : recentTransactions.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-sm text-slate-550 dark:text-slate-500">Belum ada aktivitas transaksi.</p>
-                  <Link to="/transactions" className="text-xs text-[#1A56A0] dark:text-[#D6E4F7] hover:underline mt-1 block">Catat Transaksi Pertama</Link>
+                  <Link to="/transactions" className="text-xs text-primary dark:text-primary-light hover:underline mt-1 block">Catat Transaksi Pertama</Link>
                 </div>
               ) : (
                 recentTransactions.map(tx => (

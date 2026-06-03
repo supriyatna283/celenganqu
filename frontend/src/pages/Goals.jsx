@@ -186,7 +186,7 @@ export default function Goals() {
           </div>
           <button
             onClick={openAddModal}
-            className="bg-[#1A56A0] hover:bg-[#164882] text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-[#1A56A0]/20 transition-all duration-200"
+            className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
           >
             <Plus className="w-4 h-4" />
             <span>Target Baru</span>
@@ -210,7 +210,7 @@ export default function Goals() {
               </p>
               <button
                 onClick={openAddModal}
-                className="mt-4 bg-[#1A56A0] hover:bg-[#164882] text-white px-4 py-2 rounded-xl text-xs font-semibold"
+                className="mt-4 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-semibold"
               >
                 Buat Target Pertama
               </button>
@@ -291,7 +291,7 @@ export default function Goals() {
                         onClick={() => openDepositModal(g)}
                         className="w-full bg-slate-800 hover:bg-slate-750 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors duration-200"
                       >
-                        <ArrowUpRight className="w-4 h-4 text-[#D6E4F7]" />
+                        <ArrowUpRight className="w-4 h-4 text-primary-light" />
                         <span>Tabung Dana</span>
                       </button>
                     )}
@@ -331,7 +331,7 @@ export default function Goals() {
                     placeholder="misal: Beli Motor, Dana Darurat"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -343,7 +343,7 @@ export default function Goals() {
                     placeholder="0"
                     value={formatRupiahInput(targetAmount)}
                     onChange={handleTargetAmountChange}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -354,7 +354,7 @@ export default function Goals() {
                     type="date"
                     value={targetDate}
                     onChange={(e) => setTargetDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                   />
                 </div>
 
@@ -378,7 +378,7 @@ export default function Goals() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-[#1A56A0] to-[#164882] text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#1A56A0]/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>
@@ -420,7 +420,7 @@ export default function Goals() {
                   <select
                     value={sourceAccountId}
                     onChange={(e) => setSourceAccountId(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   >
                     {accounts.map(acc => (
@@ -436,7 +436,7 @@ export default function Goals() {
                     placeholder="0"
                     value={formatRupiahInput(depositAmount)}
                     onChange={handleDepositAmountChange}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -444,7 +444,7 @@ export default function Goals() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-[#1A56A0] to-[#164882] text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#1A56A0]/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>

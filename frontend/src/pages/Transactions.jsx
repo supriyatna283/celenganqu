@@ -24,6 +24,7 @@ import {
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import toast from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SkeletonList } from '../components/Skeleton';
 import LiveReceiptScanner from '../components/LiveReceiptScanner';
 
@@ -73,7 +74,8 @@ export default function Transactions() {
   const [attachment, setAttachment] = useState(null);
   const [importFile, setImportFile] = useState(null);
   
-  const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
+  const [error, setError] = useState(''); // Keep for global errors like API failures
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -158,24 +160,27 @@ export default function Transactions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!accountId || !type || !amount || !category || !transactionDate) {
-      setError('Harap isi semua field wajib.');
-      toast.error('Harap isi semua field wajib.');
-      return;
-    }
+    const newErrors = {};
 
+    if (!accountId) newErrors.accountId = 'Akun wajib dipilih.';
+    if (!type) newErrors.type = 'Tipe transaksi wajib dipilih.';
+    if (!amount) newErrors.amount = 'Jumlah nominal tidak boleh kosong.';
+    if (type !== 'transfer' && !category) newErrors.category = 'Kategori wajib dipilih.';
+    if (!transactionDate) newErrors.transactionDate = 'Tanggal wajib diisi.';
+    
     if (type === 'transfer' && !destAccountId && !isRecurringModal) {
-      setError('Pilih akun tujuan untuk transfer.');
-      toast.error('Pilih akun tujuan untuk transfer.');
-      return;
+      newErrors.destAccountId = 'Akun tujuan wajib dipilih.';
     }
-
     if (type === 'transfer' && accountId === destAccountId && !isRecurringModal) {
-      setError('Akun asal dan akun tujuan tidak boleh sama.');
-      toast.error('Akun asal dan akun tujuan tidak boleh sama.');
+      newErrors.destAccountId = 'Akun asal dan akun tujuan tidak boleh sama.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
       return;
     }
 
+    setFormErrors({});
     setSubmitting(true);
     setError('');
 
@@ -422,7 +427,7 @@ export default function Transactions() {
                 </button>
                 <button
                   onClick={openAddModal}
-                  className="bg-[#1A56A0] hover:bg-[#164882] text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-[#1A56A0]/20 transition-all duration-200"
+                  className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Tambah Transaksi</span>
@@ -446,7 +451,7 @@ export default function Transactions() {
             onClick={() => setActiveTab('history')}
             className={`px-5 py-3 font-semibold text-sm transition-all border-b-2 -mb-[2px] ${
               activeTab === 'history'
-                ? 'border-[#1A56A0] text-[#1A56A0] dark:text-[#D6E4F7]'
+                ? 'border-primary text-primary dark:text-primary-light'
                 : 'border-transparent text-slate-550 hover:text-slate-800 dark:hover:text-slate-300'
             }`}
           >
@@ -469,7 +474,7 @@ export default function Transactions() {
             {/* Filters Panel */}
             <div className="bg-white/70 dark:bg-slate-900/40 border border-slate-150 dark:border-slate-800 p-6 rounded-3xl space-y-4">
               <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-300">
-                <Filter className="w-4 h-4 text-[#1A56A0] dark:text-[#D6E4F7]" />
+                <Filter className="w-4 h-4 text-primary dark:text-primary-light" />
                 <span className="text-sm font-bold">Filter Transaksi</span>
               </div>
 
@@ -541,7 +546,7 @@ export default function Transactions() {
                   <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">Catat pengeluaran, pemasukan, atau transfer antar akun keuangan Anda.</p>
                   <button
                     onClick={openAddModal}
-                    className="mt-4 inline-flex items-center space-x-1.5 text-xs font-bold text-[#1A56A0] dark:text-[#D6E4F7] hover:underline"
+                    className="mt-4 inline-flex items-center space-x-1.5 text-xs font-bold text-primary dark:text-primary-light hover:underline"
                   >
                     <span>Catat Transaksi Sekarang</span>
                     <Plus className="w-3.5 h-3.5" />
@@ -550,80 +555,95 @@ export default function Transactions() {
               ) : (
                 <div className="divide-y divide-slate-100 dark:divide-slate-850">
                   {transactions.map(tx => (
-                    <div 
-                      key={tx.id} 
-                      className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-all duration-200"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
-                          tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-450' :
-                          tx.type === 'expense' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-450' : 'bg-blue-500/10 text-blue-600 dark:text-blue-450'
-                        }`}>
-                          {tx.type === 'income' ? <ArrowUpRight className="w-5 h-5" /> :
-                           tx.type === 'expense' ? <ArrowDownRight className="w-5 h-5" /> : <ArrowLeftRight className="w-5 h-5" />}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="flex items-center space-x-2">
-                            <span className="font-bold text-slate-900 dark:text-white truncate">{tx.category}</span>
-                            {tx.is_recurring && (
-                              <span className="bg-indigo-50 dark:bg-indigo-950/30 text-indigo-650 dark:text-indigo-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
-                                Rutin
-                              </span>
-                            )}
-                            {tx.type === 'transfer' && (
-                              <>
-                                <span className="text-xs text-slate-400 font-semibold">{tx.account?.name}</span>
-                                <span className="text-xs text-slate-400">➔</span>
-                                <span className="text-xs text-slate-400 font-semibold">{tx.destination_account?.name}</span>
-                              </>
-                            )}
-                            {tx.type !== 'transfer' && (
-                              <span className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
-                                {tx.account?.name}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-xs text-slate-500 mt-1 block max-w-sm truncate">{tx.description || '-'}</span>
-                          {tx.attachment_url && (
-                            <a href={`http://localhost:5000${tx.attachment_url}`} target="_blank" rel="noreferrer" className="inline-flex items-center space-x-1 text-[10px] font-medium text-[#1A56A0] dark:text-[#D6E4F7] mt-1.5 hover:underline">
-                              <Paperclip className="w-3 h-3" />
-                              <span>Lihat Lampiran</span>
-                            </a>
-                          )}
-                        </div>
+                    <div key={tx.id} className="relative overflow-hidden bg-transparent group">
+                      {/* Swipe Actions Background */}
+                      <div className="absolute inset-0 flex items-center justify-end px-4 space-x-2 bg-red-50/50 dark:bg-red-950/20">
+                        <button
+                          onClick={() => handleDelete(tx.id)}
+                          className="p-3 text-red-500 bg-red-100 dark:bg-red-900/50 rounded-xl font-bold flex items-center space-x-1"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       </div>
-
-                      <div className="flex items-center justify-between sm:justify-end gap-6">
-                        <div className="text-left sm:text-right">
-                          <span className={`text-sm font-bold block ${
-                            tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' :
-                            tx.type === 'expense' ? 'text-rose-650 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400'
+                      
+                      {/* Draggable Foreground */}
+                      <motion.div 
+                        drag="x"
+                        dragConstraints={{ left: -80, right: 0 }}
+                        dragElastic={0.1}
+                        className="relative z-10 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 sm:hover:bg-slate-50/50 sm:dark:hover:bg-slate-950/20 transition-colors cursor-grab active:cursor-grabbing border-b border-transparent dark:border-slate-800"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
+                            tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-450' :
+                            tx.type === 'expense' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-450' : 'bg-blue-500/10 text-blue-600 dark:text-blue-450'
                           }`}>
-                            {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''} {formatIDR(tx.amount)}
-                          </span>
-                          <div className="flex items-center sm:justify-end text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 space-x-1">
-                            <Calendar className="w-3 h-3" />
-                            <span>{tx.transaction_date}</span>
+                            {tx.type === 'income' ? <ArrowUpRight className="w-5 h-5" /> :
+                             tx.type === 'expense' ? <ArrowDownRight className="w-5 h-5" /> : <ArrowLeftRight className="w-5 h-5" />}
+                          </div>
+                          <div className="min-w-0 pointer-events-none">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-bold text-slate-900 dark:text-white truncate">{tx.category}</span>
+                              {tx.is_recurring && (
+                                <span className="bg-indigo-50 dark:bg-indigo-950/30 text-indigo-650 dark:text-indigo-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                                  Rutin
+                                </span>
+                              )}
+                              {tx.type === 'transfer' && (
+                                <>
+                                  <span className="text-xs text-slate-400 font-semibold">{tx.account?.name}</span>
+                                  <span className="text-xs text-slate-400">➔</span>
+                                  <span className="text-xs text-slate-400 font-semibold">{tx.destination_account?.name}</span>
+                                </>
+                              )}
+                              {tx.type !== 'transfer' && (
+                                <span className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
+                                  {tx.account?.name}
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-xs text-slate-500 mt-1 block max-w-sm truncate">{tx.description || '-'}</span>
+                            {tx.attachment_url && (
+                              <a href={`http://localhost:5000${tx.attachment_url}`} target="_blank" rel="noreferrer" className="pointer-events-auto inline-flex items-center space-x-1 text-[10px] font-medium text-primary dark:text-primary-light mt-1.5 hover:underline">
+                                <Paperclip className="w-3 h-3" />
+                                <span>Lihat Lampiran</span>
+                              </a>
+                            )}
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-1">
-                          <button
-                            onClick={() => openEditModal(tx)}
-                            className="p-2 text-slate-400 hover:text-slate-800 dark:hover:text-white bg-slate-100/50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
-                            title="Edit"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(tx.id)}
-                            className="p-2 text-slate-400 hover:text-red-500 bg-slate-100/50 dark:bg-slate-800/30 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                            title="Hapus"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                        <div className="flex items-center justify-between sm:justify-end gap-6 pointer-events-none sm:pointer-events-auto">
+                          <div className="text-left sm:text-right">
+                            <span className={`text-sm font-bold block ${
+                              tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' :
+                              tx.type === 'expense' ? 'text-rose-650 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400'
+                            }`}>
+                              {tx.type === 'income' ? '+' : tx.type === 'expense' ? '-' : ''} {formatIDR(tx.amount)}
+                            </span>
+                            <div className="flex items-center sm:justify-end text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 space-x-1">
+                              <Calendar className="w-3 h-3" />
+                              <span>{tx.transaction_date}</span>
+                            </div>
+                          </div>
+
+                          <div className="hidden md:flex items-center space-x-1">
+                            <button
+                              onClick={() => openEditModal(tx)}
+                              className="p-2 text-slate-400 hover:text-slate-800 dark:hover:text-white bg-slate-100/50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors pointer-events-auto"
+                              title="Edit"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(tx.id)}
+                              className="p-2 text-slate-400 hover:text-red-500 bg-slate-100/50 dark:bg-slate-800/30 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors pointer-events-auto"
+                              title="Hapus"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      </motion.div>
                     </div>
                   ))}
                 </div>
@@ -717,9 +737,16 @@ export default function Transactions() {
         )}
 
         {/* Modal (Add / Edit Transaction / Recurring Template) */}
-        {modalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative">
+        <AnimatePresence>
+          {modalOpen && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0, y: 100, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 100, scale: 0.95 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative"
+              >
               <button
                 onClick={() => setModalOpen(false)}
                 className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 dark:hover:text-white"
@@ -807,53 +834,53 @@ export default function Transactions() {
 
                 {/* Account Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">
+                  <label className={`text-xs font-semibold uppercase tracking-wider block ${formErrors.accountId ? 'text-red-500' : 'text-slate-600 dark:text-slate-300'}`}>
                     {type === 'transfer' ? 'Dari Akun (Asal)' : 'Akun Keuangan'}
                   </label>
                   <select
                     value={accountId}
-                    onChange={(e) => setAccountId(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
-                    required
+                    onChange={(e) => { setAccountId(e.target.value); setFormErrors(prev => ({...prev, accountId: ''})); }}
+                    className={`w-full bg-slate-50 dark:bg-slate-950 border text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none transition-colors ${formErrors.accountId ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20' : 'border-slate-250 dark:border-slate-800 focus:border-primary'}`}
                   >
                     {accounts.map(acc => (
                       <option key={acc.id} value={acc.id}>{acc.name} ({formatIDR(acc.balance)})</option>
                     ))}
                   </select>
+                  {formErrors.accountId && <p className="text-[10px] text-red-500 mt-1">{formErrors.accountId}</p>}
                 </div>
 
                 {/* Destination Account Selection for Transfer */}
                 {type === 'transfer' && !isRecurringModal && (
                   <div className="space-y-1.5 animate-fadeIn">
-                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">Ke Akun (Tujuan)</label>
+                    <label className={`text-xs font-semibold uppercase tracking-wider block ${formErrors.destAccountId ? 'text-red-500' : 'text-slate-600 dark:text-slate-300'}`}>Ke Akun (Tujuan)</label>
                     <select
                       value={destAccountId}
-                      onChange={(e) => setDestAccountId(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
-                      required
+                      onChange={(e) => { setDestAccountId(e.target.value); setFormErrors(prev => ({...prev, destAccountId: ''})); }}
+                      className={`w-full bg-slate-50 dark:bg-slate-950 border text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none transition-colors ${formErrors.destAccountId ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20' : 'border-slate-250 dark:border-slate-800 focus:border-primary'}`}
                     >
                       <option value="">Pilih Akun Tujuan</option>
                       {accounts.map(acc => (
                         <option key={acc.id} value={acc.id}>{acc.name} ({formatIDR(acc.balance)})</option>
                       ))}
                     </select>
+                    {formErrors.destAccountId && <p className="text-[10px] text-red-500 mt-1">{formErrors.destAccountId}</p>}
                   </div>
                 )}
 
                 {/* Category Selection */}
                 {type !== 'transfer' && (
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">Kategori</label>
+                    <label className={`text-xs font-semibold uppercase tracking-wider block ${formErrors.category ? 'text-red-500' : 'text-slate-600 dark:text-slate-300'}`}>Kategori</label>
                     <select
                       value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
-                      required
+                      onChange={(e) => { setCategory(e.target.value); setFormErrors(prev => ({...prev, category: ''})); }}
+                      className={`w-full bg-slate-50 dark:bg-slate-950 border text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none transition-colors ${formErrors.category ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20' : 'border-slate-250 dark:border-slate-800 focus:border-primary'}`}
                     >
                       {(type === 'expense' ? expenseCategories : incomeCategories).map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                       ))}
                     </select>
+                    {formErrors.category && <p className="text-[10px] text-red-500 mt-1">{formErrors.category}</p>}
                   </div>
                 )}
 
@@ -864,7 +891,7 @@ export default function Transactions() {
                     <select
                       value={frequency}
                       onChange={(e) => setFrequency(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                       required
                     >
                       <option value="daily">Harian (Setiap Hari)</option>
@@ -877,29 +904,29 @@ export default function Transactions() {
 
                 {/* Amount Input */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">Jumlah Nominal (Rp)</label>
+                  <label className={`text-xs font-semibold uppercase tracking-wider block ${formErrors.amount ? 'text-red-500' : 'text-slate-600 dark:text-slate-300'}`}>Jumlah Nominal (Rp)</label>
                   <input
                     type="text"
                     placeholder="0"
                     value={formatRupiahInput(amount)}
-                    onChange={handleAmountChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
-                    required
+                    onChange={(e) => { handleAmountChange(e); setFormErrors(prev => ({...prev, amount: ''})); }}
+                    className={`w-full bg-slate-50 dark:bg-slate-950 border text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none transition-colors ${formErrors.amount ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20' : 'border-slate-250 dark:border-slate-800 focus:border-primary'}`}
                   />
+                  {formErrors.amount && <p className="text-[10px] text-red-500 mt-1">{formErrors.amount}</p>}
                 </div>
 
                 {/* Date Input */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">
+                  <label className={`text-xs font-semibold uppercase tracking-wider block ${formErrors.transactionDate ? 'text-red-500' : 'text-slate-600 dark:text-slate-300'}`}>
                     {isRecurringModal ? 'Tanggal Mulai Rutin' : 'Tanggal Transaksi'}
                   </label>
                   <input
                     type="date"
                     value={transactionDate}
-                    onChange={(e) => setTransactionDate(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
-                    required
+                    onChange={(e) => { setTransactionDate(e.target.value); setFormErrors(prev => ({...prev, transactionDate: ''})); }}
+                    className={`w-full bg-slate-50 dark:bg-slate-950 border text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none transition-colors ${formErrors.transactionDate ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20' : 'border-slate-250 dark:border-slate-800 focus:border-primary'}`}
                   />
+                  {formErrors.transactionDate && <p className="text-[10px] text-red-500 mt-1">{formErrors.transactionDate}</p>}
                 </div>
 
                 {/* Description Input */}
@@ -910,7 +937,7 @@ export default function Transactions() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={2}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0] resize-none"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary resize-none"
                   />
                 </div>
 
@@ -947,9 +974,10 @@ export default function Transactions() {
                   )}
                 </button>
               </form>
+              </motion.div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
 
         {/* Modal Import CSV */}
         {isImportModal && (

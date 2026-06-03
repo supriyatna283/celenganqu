@@ -60,8 +60,8 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 relative overflow-hidden select-none">
       {/* Decorative background gradients */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#1A56A0]/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#1A56A0]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main glass card */}
       <div className="w-full max-w-md bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl relative z-10 transition-all duration-300 hover:border-slate-700">
@@ -72,7 +72,7 @@ export default function Register() {
             <img src={logoImg} className="w-full h-full object-contain" alt="CelenganQu Logo" />
           </div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight font-outfit">
-            Celengan<span className="text-[#D6E4F7] font-medium">Qu</span>
+            Celengan<span className="text-primary-light font-medium">Qu</span>
           </h2>
           <p className="text-slate-400 text-sm mt-2 text-center">
             Mulai kelola keuangan dengan mendaftar di bawah ini
@@ -98,7 +98,7 @@ export default function Register() {
                 placeholder="Nama Anda"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-4 outline-none transition-all duration-200 focus:border-[#1A56A0] focus:ring-1 focus:ring-[#1A56A0]/20 placeholder:text-slate-600"
+                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-4 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-600"
                 required
               />
             </div>
@@ -116,7 +116,7 @@ export default function Register() {
                 placeholder="nama@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-4 outline-none transition-all duration-200 focus:border-[#1A56A0] focus:ring-1 focus:ring-[#1A56A0]/20 placeholder:text-slate-600"
+                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-4 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-600"
                 required
               />
             </div>
@@ -134,7 +134,7 @@ export default function Register() {
                 placeholder="Minimal 6 karakter"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-12 outline-none transition-all duration-200 focus:border-[#1A56A0] focus:ring-1 focus:ring-[#1A56A0]/20 placeholder:text-slate-600"
+                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-12 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-600"
                 required
               />
               <button
@@ -159,7 +159,7 @@ export default function Register() {
                 placeholder="Ulangi password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-4 outline-none transition-all duration-200 focus:border-[#1A56A0] focus:ring-1 focus:ring-[#1A56A0]/20 placeholder:text-slate-600"
+                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-2.5 pl-11 pr-4 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-600"
                 required
               />
             </div>
@@ -169,7 +169,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-[#1A56A0] to-[#164882] text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-[#1A56A0]/20 flex items-center justify-center space-x-2 transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-50 mt-2"
+            className="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center space-x-2 transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-50 mt-2"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -184,7 +184,7 @@ export default function Register() {
 
         <div className="mt-6 text-center text-sm text-slate-500">
           Sudah punya akun?{' '}
-          <Link to="/login" className="text-[#D6E4F7] hover:underline font-medium">
+          <Link to="/login" className="text-primary-light hover:underline font-medium">
             Masuk Di Sini
           </Link>
         </div>

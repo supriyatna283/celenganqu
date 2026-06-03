@@ -120,6 +120,16 @@ export default function Accounts() {
     }).format(value);
   };
 
+  const formatRupiahInput = (value) => {
+    if (!value) return '';
+    return new Intl.NumberFormat('id-ID').format(value);
+  };
+
+  const handleBalanceChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setBalance(rawValue);
+  };
+
   const accountTypes = [
     { value: 'savings', label: 'Tabungan Bank' },
     { value: 'wallet', label: 'Dompet / Cash' },
@@ -140,7 +150,7 @@ export default function Accounts() {
           </div>
           <button
             onClick={openAddModal}
-            className="bg-[#1A56A0] hover:bg-[#164882] text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-[#1A56A0]/20 transition-all duration-200"
+            className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
           >
             <Plus className="w-4 h-4" />
             <span>Tambah Akun</span>
@@ -162,7 +172,7 @@ export default function Accounts() {
               <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">Mulai dengan membuat akun keuangan seperti dompet tunai atau rekening bank Anda.</p>
               <button
                 onClick={openAddModal}
-                className="mt-4 bg-[#1A56A0] hover:bg-[#164882] text-white px-4 py-2 rounded-xl text-xs font-semibold"
+                className="mt-4 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-semibold"
               >
                 Buat Akun Pertama
               </button>
@@ -257,7 +267,7 @@ export default function Accounts() {
                     placeholder="misal: Bank BCA, Dompet Utama"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -267,7 +277,7 @@ export default function Accounts() {
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0] capitalize"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary capitalize"
                   >
                     {accountTypes.map(opt => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -279,11 +289,11 @@ export default function Accounts() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Saldo Awal (Rp)</label>
                     <input
-                      type="number"
+                      type="text"
                       placeholder="0"
-                      value={balance}
-                      onChange={(e) => setBalance(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                      value={formatRupiahInput(balance)}
+                      onChange={handleBalanceChange}
+                      className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     />
                   </div>
                 )}
@@ -308,7 +318,7 @@ export default function Accounts() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-[#1A56A0] to-[#164882] text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#1A56A0]/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>

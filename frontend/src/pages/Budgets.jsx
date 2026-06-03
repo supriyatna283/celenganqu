@@ -135,7 +135,7 @@ export default function Budgets() {
           </div>
           <button
             onClick={openAddModal}
-            className="bg-[#1A56A0] hover:bg-[#164882] text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-[#1A56A0]/20 transition-all duration-200"
+            className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
           >
             <Plus className="w-4 h-4" />
             <span>Buat Anggaran</span>
@@ -166,7 +166,7 @@ export default function Budgets() {
                 </button>
                 <button
                   onClick={openAddModal}
-                  className="bg-[#1A56A0] hover:bg-[#164882] text-white px-4 py-2 rounded-xl text-xs font-semibold"
+                  className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-semibold"
                 >
                   Buat Anggaran Pertama
                 </button>
@@ -242,7 +242,7 @@ export default function Budgets() {
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] text-slate-500 block uppercase font-semibold">Limit Anggaran</span>
-                      <span className="text-base font-bold text-[#D6E4F7]">{formatIDR(limit)}</span>
+                      <span className="text-base font-bold text-primary-light">{formatIDR(limit)}</span>
                     </div>
                   </div>
 
@@ -289,7 +289,7 @@ export default function Budgets() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                      className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                       required
                     >
                       {categoriesList.map(cat => (
@@ -306,7 +306,7 @@ export default function Budgets() {
                     placeholder="misal: 1000000"
                     value={formatRupiahInput(amountLimit)}
                     onChange={handleAmountLimitChange}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -314,7 +314,7 @@ export default function Budgets() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-[#1A56A0] to-[#164882] text-white py-3 rounded-xl font-semibold shadow-lg shadow-[#1A56A0]/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>
