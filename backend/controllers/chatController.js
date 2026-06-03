@@ -72,11 +72,14 @@ exports.processChatMessage = async (req, res) => {
         "amount": 100000,
         "account_id": 1, // ID akun yang paling cocok dengan ucapan pengguna
         "category": "Makanan", // Harus persis dengan nama kategori pengguna, atau 'Lainnya' jika tidak ada
-        "description": "Deskripsi transaksi"
+        "description": "Deskripsi singkat transaksi"
       }
     }
-    
-    Jika intent adalah 'can_i_afford', analisis harga barang yang ingin dibeli pengguna, bandingkan dengan sisa saldo akun dan sisa budget mereka, lalu berikan saran yang masuk akal di dalam field 'reply'.
+
+    PANDUAN PENTING UNTUK 'reply':
+    1. Jika 'log_transaction': WAJIB sebutkan kembali detail transaksinya secara spesifik di 'reply' (Contoh: "Sip! Pemasukan sebesar Rp 1.000.000 dari Sidejob udah aku masukin ke akun BCA kamu ya! 🚀"). Jangan membalas dengan kalimat generik.
+    2. Jika 'can_i_afford': Analisis harga barang, bandingkan dengan sisa saldo & budget, lalu beri saran yang bijak.
+    3. Selalu gunakan gaya bahasa gaul, santai, empati, dan pintar layaknya teman dekat.
     `;
 
     const chatCompletion = await groq.chat.completions.create({
