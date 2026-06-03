@@ -3,6 +3,7 @@ import { useFinanceStore } from '../store/financeStore';
 import Layout from '../components/Layout';
 import { Plus, Trash2, X, Folder, HelpCircle, Utensils, Car, ShoppingBag, Film, CreditCard, HeartPulse, Briefcase, TrendingUp, Gift, Home, BookOpen, Smartphone, Plane, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useConfirmStore } from '../store/confirmStore';
 
 // Helper to map icon names to Lucide icon components
 const IconMap = {
@@ -30,6 +31,7 @@ const PRESETS_COLORS = [
 ];
 
 export default function Settings() {
+  const { confirm } = useConfirmStore();
   const { categories, fetchCategories, createCustomCategory, deleteCustomCategory, loadingCategories } = useFinanceStore();
   const [activeTab, setActiveTab] = useState('expense');
   const [modalOpen, setModalOpen] = useState(false);
@@ -68,7 +70,8 @@ export default function Settings() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus kategori ini? Transaksi yang sudah menggunakan kategori ini tidak akan terhapus, namun kategori ini tidak akan muncul lagi di pilihan.')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Apakah Anda yakin ingin menghapus kategori ini? Transaksi yang sudah menggunakan kategori ini tidak akan terhapus, namun kategori ini tidak akan muncul lagi di pilihan.');
+    if (isConfirmed) {
       try {
         await deleteCustomCategory(id);
         toast.success('Kategori berhasil dihapus!');

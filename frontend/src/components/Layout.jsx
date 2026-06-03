@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import AIChatbot from './AIChatbot';
+import ConfirmModal from './ConfirmModal';
 
 export default function Layout({ children }) {
   const { user, logout, isAuthenticated, initializeAuth } = useAuthStore();
@@ -223,23 +224,23 @@ export default function Layout({ children }) {
       </div>
 
       {/* Bottom Navigation for Mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-40 pb-safe">
-        <div className="flex items-center justify-around px-2 py-2 relative">
-          <Link to="/" className={`flex flex-col items-center p-2 min-w-[64px] ${location.pathname === '/' ? 'text-primary dark:text-primary-light' : 'text-slate-400 dark:text-slate-500'}`}>
-            <LayoutDashboard className={`w-6 h-6 mb-1 ${location.pathname === '/' ? 'fill-current opacity-20' : ''}`} />
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-t border-slate-200 dark:border-slate-800 z-40 pb-safe shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
+        <div className="flex items-center justify-around px-2 py-1.5 relative">
+          <Link to="/" className={`flex flex-col items-center p-2 min-w-[64px] transition-colors ${location.pathname === '/' ? 'text-primary dark:text-primary-light' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}>
+            <LayoutDashboard className={`w-6 h-6 mb-1 transition-transform ${location.pathname === '/' ? 'fill-current opacity-20 scale-110' : 'active:scale-95'}`} />
             <span className="text-[10px] font-medium">Beranda</span>
           </Link>
           
-          <Link to="/transactions" className={`flex flex-col items-center p-2 min-w-[64px] ${location.pathname === '/transactions' ? 'text-primary dark:text-primary-light' : 'text-slate-400 dark:text-slate-500'}`}>
-            <ArrowLeftRight className={`w-6 h-6 mb-1 ${location.pathname === '/transactions' ? 'fill-current opacity-20' : ''}`} />
+          <Link to="/transactions" className={`flex flex-col items-center p-2 min-w-[64px] transition-colors ${location.pathname === '/transactions' ? 'text-primary dark:text-primary-light' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}>
+            <ArrowLeftRight className={`w-6 h-6 mb-1 transition-transform ${location.pathname === '/transactions' ? 'fill-current opacity-20 scale-110' : 'active:scale-95'}`} />
             <span className="text-[10px] font-medium">Transaksi</span>
           </Link>
 
           {/* Floating Action Button */}
-          <div className="relative -top-6 flex flex-col items-center">
+          <div className="relative -top-7 flex flex-col items-center px-2">
             <Link 
               to="/transactions" 
-              className="w-14 h-14 bg-gradient-to-tr from-primary to-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30 transform transition-transform hover:scale-105 active:scale-95"
+              className="w-14 h-14 bg-gradient-to-tr from-primary to-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30 transform transition-transform hover:scale-105 active:scale-95 border-4 border-slate-50 dark:border-slate-900"
             >
               <Plus className="w-7 h-7" />
             </Link>
@@ -247,23 +248,24 @@ export default function Layout({ children }) {
 
           <button 
             onClick={() => window.dispatchEvent(new Event('open-ai-chat'))}
-            className="flex flex-col items-center p-2 min-w-[64px] text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
+            className="flex flex-col items-center p-2 min-w-[64px] text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors active:scale-95"
           >
-            <Bot className="w-6 h-6 mb-1" />
-            <span className="text-[10px] font-medium">AI</span>
+            <Bot className="w-6 h-6 mb-1 transition-transform" />
+            <span className="text-[10px] font-medium">AI Chat</span>
           </button>
 
           <button 
             onClick={() => setMobileMenuOpen(true)}
-            className="flex flex-col items-center p-2 min-w-[64px] text-slate-400 dark:text-slate-500"
+            className={`flex flex-col items-center p-2 min-w-[64px] transition-colors active:scale-95 ${mobileMenuOpen ? 'text-primary dark:text-primary-light' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}
           >
-            <Menu className="w-6 h-6 mb-1" />
+            <Menu className="w-6 h-6 mb-1 transition-transform" />
             <span className="text-[10px] font-medium">Lainnya</span>
           </button>
         </div>
       </nav>
 
       <AIChatbot />
+      <ConfirmModal />
     </div>
   );
 }

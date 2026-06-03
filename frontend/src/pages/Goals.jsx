@@ -4,8 +4,12 @@ import Layout from '../components/Layout';
 import { Plus, Trash2, Edit3, X, PiggyBank, Target, Calendar, ArrowUpRight, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { SkeletonCard } from '../components/Skeleton';
+import { useConfirmStore } from '../store/confirmStore';
+import EmptyState from '../components/EmptyState';
+import confetti from 'canvas-confetti';
 
 export default function Goals() {
+  const { confirm } = useConfirmStore();
   const {
     goals,
     accounts,
@@ -138,12 +142,26 @@ export default function Goals() {
     setError('');
 
     try {
+      const current = parseFloat(selectedGoalForDeposit.current_amount || 0);
+      const target = parseFloat(selectedGoalForDeposit.target_amount || 0);
+      const depositVal = parseFloat(depositAmount);
+      
       await depositToGoal(selectedGoalForDeposit.id, {
         account_id: parseInt(sourceAccountId),
-        amount: parseFloat(depositAmount)
+        amount: depositVal
       });
+      
       toast.success('Dana berhasil disimpan ke target tabungan!');
       setDepositModalOpen(false);
+
+      if (current + depositVal >= target && current < target) {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff']
+        });
+      }
     } catch (err) {
       setError(err.message || 'Gagal menabung.');
       toast.error(err.message || 'Gagal menabung dana.');
@@ -153,7 +171,8 @@ export default function Goals() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus tujuan keuangan ini?')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Apakah Anda yakin ingin menghapus tujuan keuangan ini?');
+    if (isConfirmed) {
       try {
         await deleteGoal(id);
         toast.success('Target tabungan berhasil dihapus!');
@@ -202,19 +221,13 @@ export default function Goals() {
               <SkeletonCard />
             </>
           ) : goals.length === 0 ? (
-            <div className="col-span-full bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
-              <PiggyBank className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-lg font-bold">Belum ada target tabungan</h3>
-              <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
-                Beli kendaraan, liburan, rumah, atau dana darurat? Buat target tabungan dan mulailah menyisihkan uang Anda!
-              </p>
-              <button
-                onClick={openAddModal}
-                className="mt-4 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-semibold"
-              >
-                Buat Target Pertama
-              </button>
-            </div>
+            <EmptyState
+              icon={PiggyBank}
+              title="Belum ada target tabungan"
+              description="Beli kendaraan, liburan, rumah, atau dana darurat? Buat target tabungan dan mulailah menyisihkan uang Anda!"
+              buttonText="Buat Target Pertama"
+              onAction={openAddModal}
+            />
           ) : (
             goals.map(g => {
               const target = parseFloat(g.target_amount);

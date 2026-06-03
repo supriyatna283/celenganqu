@@ -3,8 +3,12 @@ import { useFinanceStore } from '../store/financeStore';
 import Layout from '../components/Layout';
 import { Plus, Trash2, X, AlertTriangle, CheckCircle, Handshake, Calendar, DollarSign, Wallet, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useConfirmStore } from '../store/confirmStore';
+import EmptyState from '../components/EmptyState';
+import confetti from 'canvas-confetti';
 
 export default function DebtLoans() {
+  const { confirm } = useConfirmStore();
   const { 
     debtsLoans, 
     accounts,
@@ -109,12 +113,24 @@ export default function DebtLoans() {
 
     setPaying(true);
     try {
+      const payVal = parseFloat(payAmount);
+      const remaining = parseFloat(selectedRecord.remaining_amount || 0);
+
       await payDebtLoan(selectedRecord.id, {
-        amount: parseFloat(payAmount),
+        amount: payVal,
         account_id: parseInt(accountId)
       });
       toast.success('Pembayaran berhasil dicatat!');
       setPayModalOpen(false);
+
+      if (payVal >= remaining) {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff']
+        });
+      }
     } catch (err) {
       toast.error(err.message || 'Gagal memproses pembayaran.');
     } finally {
@@ -123,7 +139,8 @@ export default function DebtLoans() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus catatan ini?')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Apakah Anda yakin ingin menghapus catatan ini?');
+    if (isConfirmed) {
       try {
         await deleteDebtLoan(id);
         toast.success('Catatan berhasil dihapus.');
@@ -203,9 +220,15 @@ export default function DebtLoans() {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-650"></div>
             </div>
           ) : filteredRecords.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">
-              Belum ada catatan {activeTab === 'debt' ? 'hutang' : 'piutang'} aktif.
-            </div>
+            <EmptyState
+              icon={Handshake}
+              title={`Belum ada catatan ${activeTab === 'debt' ? 'hutang' : 'piutang'}`}
+              description={activeTab === 'debt' 
+                ? 'Bagus! Anda tidak memiliki tanggungan hutang ke siapapun saat ini.' 
+                : 'Belum ada orang yang meminjam uang dari Anda.'}
+              buttonText={`Catat ${activeTab === 'debt' ? 'Hutang' : 'Piutang'} Baru`}
+              onAction={() => openAddModal(activeTab)}
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRecords.map((record) => {

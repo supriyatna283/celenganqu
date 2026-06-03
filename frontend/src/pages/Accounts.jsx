@@ -4,8 +4,11 @@ import Layout from '../components/Layout';
 import { Plus, Trash2, Edit3, X, CreditCard, Sparkles, Loader2, UserPlus, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { SkeletonCard } from '../components/Skeleton';
+import { useConfirmStore } from '../store/confirmStore';
+import EmptyState from '../components/EmptyState';
 
 export default function Accounts() {
+  const { confirm } = useConfirmStore();
   const { accounts, fetchAccounts, createAccount, updateAccount, deleteAccount, shareAccount, loadingAccounts } = useFinanceStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -78,7 +81,8 @@ export default function Accounts() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus akun ini?')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Apakah Anda yakin ingin menghapus akun ini?');
+    if (isConfirmed) {
       try {
         await deleteAccount(id);
         toast.success('Akun berhasil dihapus!');
@@ -166,17 +170,13 @@ export default function Accounts() {
               <SkeletonCard />
             </>
           ) : accounts.length === 0 ? (
-            <div className="col-span-full bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
-              <CreditCard className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-lg font-bold">Belum ada akun</h3>
-              <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">Mulai dengan membuat akun keuangan seperti dompet tunai atau rekening bank Anda.</p>
-              <button
-                onClick={openAddModal}
-                className="mt-4 bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-semibold"
-              >
-                Buat Akun Pertama
-              </button>
-            </div>
+            <EmptyState
+              icon={CreditCard}
+              title="Belum ada akun keuangan"
+              description="Mulai kelola keuangan Anda dengan membuat akun pertama, seperti dompet tunai atau rekening bank utama Anda."
+              buttonText="Buat Akun Pertama"
+              onAction={openAddModal}
+            />
           ) : (
             accounts.map(acc => (
               <div

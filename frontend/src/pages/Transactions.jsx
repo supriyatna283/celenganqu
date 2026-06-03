@@ -19,7 +19,8 @@ import {
   Download,
   Upload,
   Paperclip,
-  FileText
+  FileText,
+  Search
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -27,8 +28,10 @@ import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkeletonList } from '../components/Skeleton';
 import LiveReceiptScanner from '../components/LiveReceiptScanner';
+import { useConfirmStore } from '../store/confirmStore';
 
 export default function Transactions() {
+  const { confirm } = useConfirmStore();
   const {
     accounts,
     transactions,
@@ -56,6 +59,7 @@ export default function Transactions() {
   } = useFinanceStore();
 
   const [activeTab, setActiveTab] = useState('history'); // 'history' or 'recurring'
+  const [searchQuery, setSearchQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [isRecurringModal, setIsRecurringModal] = useState(false);
@@ -238,7 +242,8 @@ export default function Transactions() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Apakah Anda yakin ingin menghapus transaksi ini?');
+    if (isConfirmed) {
       try {
         await deleteTransaction(id);
         toast.success('Transaksi berhasil dihapus!');
@@ -249,7 +254,8 @@ export default function Transactions() {
   };
 
   const handleDeleteTemplate = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus rencana transaksi rutin ini? Transaksi yang sudah digenerate tidak akan terhapus.')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Apakah Anda yakin ingin menghapus rencana transaksi rutin ini? Transaksi yang sudah digenerate tidak akan terhapus.');
+    if (isConfirmed) {
       try {
         await deleteRecurringTemplate(id);
         toast.success('Rencana rutin berhasil dihapus.');
@@ -478,7 +484,24 @@ export default function Transactions() {
                 <span className="text-sm font-bold">Filter Transaksi</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                {/* Search Filter */}
+                <div className="space-y-1 md:col-span-2">
+                  <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Cari Transaksi</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Cari nama atau kategori..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-850 text-xs text-slate-700 dark:text-white rounded-xl py-2 pl-9 pr-3 outline-none focus:border-primary"
+                    />
+                  </div>
+                </div>
+
                 {/* Account Filter */}
                 <div className="space-y-1">
                   <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Akun</label>
@@ -554,7 +577,14 @@ export default function Transactions() {
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100 dark:divide-slate-850">
-                  {transactions.map(tx => (
+                  {transactions.filter(tx => {
+                    if (!searchQuery) return true;
+                    const query = searchQuery.toLowerCase();
+                    return (
+                      (tx.description && tx.description.toLowerCase().includes(query)) ||
+                      (tx.category && tx.category.toLowerCase().includes(query))
+                    );
+                  }).map(tx => (
                     <div key={tx.id} className="relative overflow-hidden bg-transparent group">
                       {/* Swipe Actions Background */}
                       <div className="absolute inset-0 flex items-center justify-end px-4 space-x-2 bg-red-50/50 dark:bg-red-950/20">

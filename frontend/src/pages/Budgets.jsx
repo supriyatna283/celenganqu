@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useFinanceStore } from '../store/financeStore';
 import Layout from '../components/Layout';
-import { Plus, Trash2, Edit3, X, AlertTriangle, CheckCircle, HelpCircle, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Edit3, X, AlertTriangle, CheckCircle, HelpCircle, Loader2, Copy, Target } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { SkeletonCard } from '../components/Skeleton';
+import { useConfirmStore } from '../store/confirmStore';
+import EmptyState from '../components/EmptyState';
 
 export default function Budgets() {
+  const { confirm } = useConfirmStore();
   const { budgets, fetchBudgets, createBudget, updateBudget, deleteBudget, copyPreviousBudgets, loadingBudgets, categories, fetchCategories } = useFinanceStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
@@ -85,7 +88,8 @@ export default function Budgets() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus anggaran ini?')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Apakah Anda yakin ingin menghapus anggaran ini?');
+    if (isConfirmed) {
       try {
         await deleteBudget(id);
         toast.success('Anggaran berhasil dihapus!');
@@ -150,28 +154,29 @@ export default function Budgets() {
               <SkeletonCard />
             </>
           ) : budgets.length === 0 ? (
-            <div className="col-span-full bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
-              <CheckCircle className="w-12 h-12 text-emerald-500/80 mx-auto mb-4" />
-              <h3 className="text-lg font-bold">Belum ada anggaran bulanan</h3>
-              <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
-                Buat batasan bulanan (misal: budget belanja atau makan) agar pengeluaran Anda lebih terkontrol.
-              </p>
-              <div className="flex justify-center space-x-3 mt-4">
+            <EmptyState
+              icon={Target}
+              title="Belum ada anggaran bulanan"
+              description="Buat batasan bulanan (misal: budget belanja atau makan) agar pengeluaran Anda lebih terkontrol."
+            >
+              <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-3 mt-4">
                 <button
                   onClick={handleCopyBudgets}
                   disabled={copying}
-                  className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-semibold disabled:opacity-50"
+                  className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl text-sm font-semibold disabled:opacity-50 flex items-center justify-center transition-all"
                 >
+                  <Copy className="w-4 h-4 mr-2" />
                   {copying ? 'Menyalin...' : 'Salin dari Bulan Lalu'}
                 </button>
                 <button
                   onClick={openAddModal}
-                  className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-semibold"
+                  className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl text-sm font-semibold flex items-center justify-center space-x-2 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95"
                 >
-                  Buat Anggaran Pertama
+                  <Plus className="w-4 h-4" />
+                  <span>Buat Anggaran Pertama</span>
                 </button>
               </div>
-            </div>
+            </EmptyState>
           ) : (
             budgets.map(b => {
               const limit = parseFloat(b.amount_limit);

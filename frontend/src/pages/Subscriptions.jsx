@@ -14,8 +14,11 @@ import {
   TrendingDown
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useConfirmStore } from '../store/confirmStore';
+import EmptyState from '../components/EmptyState';
 
 export default function Subscriptions() {
+  const { confirm } = useConfirmStore();
   const { recurrings, fetchRecurrings, toggleRecurring, deleteRecurring, loadingRecurrings } = useFinanceStore();
   
   useEffect(() => {
@@ -32,7 +35,8 @@ export default function Subscriptions() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus tagihan rutin ini?')) {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Yakin ingin menghapus tagihan rutin ini?');
+    if (isConfirmed) {
       try {
         await deleteRecurring(id);
         toast.success('Tagihan rutin dihapus.');
@@ -106,10 +110,14 @@ export default function Subscriptions() {
           {loadingRecurrings ? (
             <div className="p-8 text-center text-slate-500">Memuat data tagihan...</div>
           ) : recurrings.length === 0 ? (
-            <div className="text-center py-16">
-              <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-slate-850 dark:text-white">Belum ada tagihan rutin</h3>
-              <p className="text-slate-500 text-sm mt-1">Tambahkan tagihan bulanan seperti internet, listrik, atau Netflix.</p>
+            <div className="p-6">
+              <EmptyState
+                icon={Calendar}
+                title="Belum ada tagihan rutin"
+                description="Tambahkan tagihan bulanan Anda seperti langganan internet, listrik, atau Netflix agar tidak ada yang terlewat."
+                buttonText="Tambah Tagihan"
+                onAction={() => window.location.href = '/transactions'}
+              />
             </div>
           ) : (
             <div className="divide-y divide-slate-100 dark:divide-slate-850">
