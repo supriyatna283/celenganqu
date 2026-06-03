@@ -150,3 +150,67 @@ exports.deleteBudget = async (req, res) => {
     return res.status(500).json({ message: 'Gagal menghapus anggaran.' });
   }
 };
+
+exports.copyLastMonth = async (req, res) => {
+  try {
+    const { month, year } = req.body;
+    
+    if (!month || !year) {
+      return res.status(400).json({ message: 'Bulan dan tahun saat ini wajib diisi.' });
+    }
+
+    const currentMonth = parseInt(month);
+    const currentYear = parseInt(year);
+
+    const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+    const lastYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+
+    // Fetch last month's budgets
+    const lastMonthBudgets = await Budget.findAll({
+      where: {
+        user_id: req.user.id,
+        period_month: lastMonth,
+        period_year: lastYear
+      }
+    });
+
+    if (lastMonthBudgets.length === 0) {
+      return res.status(404).json({ message: 'Tidak ada anggaran di bulan sebelumnya untuk disalin.' });
+    }
+
+    // Fetch current month's budgets to avoid duplicates
+    const currentMonthBudgets = await Budget.findAll({
+      where: {
+        user_id: req.user.id,
+        period_month: currentMonth,
+        period_year: currentYear
+      }
+    });
+
+    const existingCategories = new Set(currentMonthBudgets.map(b => b.category));
+
+    const newBudgets = [];
+    for (const b of lastMonthBudgets) {
+      if (!existingCategories.has(b.category)) {
+        newBudgets.push({
+          user_id: req.user.id,
+          category: b.category,
+          amount_limit: b.amount_limit,
+          period_month: currentMonth,
+          period_year: currentYear
+        });
+      }
+    }
+
+    if (newBudgets.length === 0) {
+      return res.status(400).json({ message: 'Semua anggaran dari bulan lalu sudah ada di bulan ini.' });
+    }
+
+    await Budget.bulkCreate(newBudgets);
+
+    return res.status(201).json({ message: `Berhasil menyalin ${newBudgets.length} anggaran dari bulan sebelumnya.` });
+  } catch (error) {
+    console.error('copyLastMonth error:', error);
+    return res.status(500).json({ message: 'Gagal menyalin anggaran bulan lalu.' });
+  }
+};

@@ -1,6 +1,7 @@
 const Goal = require('../models/Goal');
 const Account = require('../models/Account');
 const Transaction = require('../models/Transaction');
+const Notification = require('../models/Notification');
 const sequelize = require('../config/database');
 
 exports.getGoals = async (req, res) => {
@@ -129,10 +130,33 @@ exports.depositToGoal = async (req, res) => {
       transaction_date: new Date().toISOString().split('T')[0]
     }, { transaction: t });
 
+    const oldAmount = parseFloat(goal.current_amount);
+    const targetAmount = parseFloat(goal.target_amount);
+    const oldPercent = (oldAmount / targetAmount) * 100;
+
     // 5. Update goal current amount
-    goal.current_amount = parseFloat(goal.current_amount) + numericAmount;
-    goal.is_completed = parseFloat(goal.current_amount) >= parseFloat(goal.target_amount);
+    goal.current_amount = oldAmount + numericAmount;
+    goal.is_completed = parseFloat(goal.current_amount) >= targetAmount;
     await goal.save({ transaction: t });
+
+    const newPercent = (parseFloat(goal.current_amount) / targetAmount) * 100;
+
+    // 6. Check Milestones and Notify
+    const milestones = [100, 75, 50, 25];
+    for (const m of milestones) {
+      if (oldPercent < m && newPercent >= m) {
+        await Notification.create({
+          user_id: req.user.id,
+          type: m === 100 ? 'success' : 'info',
+          title: `Milestone ${m}% Tercapai!`,
+          message: m === 100 
+            ? `Selamat! Target tujuan keuangan "${goal.name}" telah terpenuhi 100%.`
+            : `Hebat! Tabungan untuk "${goal.name}" sudah mencapai ${m}% dari target.`,
+          is_read: false
+        }, { transaction: t });
+        break; // Only trigger the highest milestone passed
+      }
+    }
 
     await t.commit();
     return res.status(200).json(goal);

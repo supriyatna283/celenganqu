@@ -9,5 +9,6 @@ router.get('/', accountController.getAccounts);
 router.post('/', accountController.createAccount);
 router.put('/:id', accountController.updateAccount);
 router.delete('/:id', accountController.deleteAccount);
+router.post('/:id/share', accountController.shareAccount);
 
 module.exports = router;

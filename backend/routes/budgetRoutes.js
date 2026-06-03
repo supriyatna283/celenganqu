@@ -7,6 +7,7 @@ router.use(protect);
 
 router.get('/', budgetController.getBudgets);
 router.post('/', budgetController.createBudget);
+router.post('/copy-last-month', budgetController.copyLastMonth);
 router.put('/:id', budgetController.updateBudget);
 router.delete('/:id', budgetController.deleteBudget);
 

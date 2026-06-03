@@ -1,4 +1,6 @@
 const Account = require('../models/Account');
+const SharedAccount = require('../models/SharedAccount');
+const User = require('../models/User');
 
 exports.getAccounts = async (req, res) => {
   try {
@@ -6,7 +8,30 @@ exports.getAccounts = async (req, res) => {
       where: { user_id: req.user.id, is_active: true },
       order: [['created_at', 'DESC']]
     });
-    return res.status(200).json(accounts);
+
+    const sharedMappings = await SharedAccount.findAll({
+      where: { user_id: req.user.id },
+      include: [{
+        model: Account,
+        as: 'account',
+        where: { is_active: true },
+        include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'] }]
+      }]
+    });
+
+    const sharedAccounts = sharedMappings.map(mapping => {
+      const acc = mapping.account.toJSON();
+      acc.is_shared = true;
+      acc.shared_role = mapping.role;
+      acc.owner = mapping.account.user;
+      return acc;
+    });
+
+    const allAccounts = [...accounts.map(a => a.toJSON()), ...sharedAccounts];
+    // Sort all accounts by creation date descending
+    allAccounts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    return res.status(200).json(allAccounts);
   } catch (error) {
     console.error('getAccounts error:', error);
     return res.status(500).json({ message: 'Gagal mengambil data akun.' });
@@ -76,5 +101,33 @@ exports.deleteAccount = async (req, res) => {
   } catch (error) {
     console.error('deleteAccount error:', error);
     return res.status(500).json({ message: 'Gagal menghapus akun.' });
+  }
+};
+
+exports.shareAccount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email, role } = req.body;
+
+    const account = await Account.findOne({ where: { id, user_id: req.user.id } });
+    if (!account) return res.status(404).json({ message: 'Akun tidak ditemukan atau Anda bukan pemiliknya.' });
+
+    const userToShare = await User.findOne({ where: { email } });
+    if (!userToShare) return res.status(404).json({ message: 'Pengguna dengan email tersebut tidak ditemukan. Pastikan mereka sudah terdaftar di Duitku.' });
+
+    if (userToShare.id === req.user.id) return res.status(400).json({ message: 'Anda tidak bisa membagikan akun ke diri sendiri.' });
+
+    const existingShare = await SharedAccount.findOne({ where: { account_id: id, user_id: userToShare.id } });
+    if (existingShare) {
+      existingShare.role = role || 'editor';
+      await existingShare.save();
+    } else {
+      await SharedAccount.create({ account_id: id, user_id: userToShare.id, role: role || 'editor' });
+    }
+
+    return res.status(200).json({ message: `Akun berhasil dibagikan ke ${userToShare.name}.` });
+  } catch (error) {
+    console.error('shareAccount error:', error);
+    return res.status(500).json({ message: 'Gagal membagikan akun.' });
   }
 };

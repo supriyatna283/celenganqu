@@ -3,7 +3,6 @@ const Budget = require('../models/Budget');
 const Account = require('../models/Account');
 const Goal = require('../models/Goal');
 const { Op } = require('sequelize');
-const { GoogleGenAI } = require('@google/genai');
 const { processRecurringTransactions } = require('../utils/recurringProcessor');
 
 exports.getInsights = async (req, res) => {
@@ -128,10 +127,11 @@ exports.getInsights = async (req, res) => {
     let finalInsights = fallbackInsights;
     let aiSummaryAnalysis = "Berikut adalah ringkasan keuangan berbasis data transaksi Anda.";
 
-    // Gemini API integration if key exists
-    if (process.env.GEMINI_API_KEY) {
+    // Groq API integration if key exists
+    if (process.env.GROQ_API_KEY) {
       try {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const Groq = require('groq-sdk');
+        const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
         
         const prompt = `Anda adalah 'Duitku AI', asisten perencana keuangan pribadi premium yang cerdas dan bersahabat. Berikut adalah ringkasan keuangan pengguna bulan ini (Bulan: ${month}, Tahun: ${year}):
 - Total Pemasukan: Rp${totalIncome.toLocaleString('id-ID')}
@@ -153,15 +153,18 @@ Berdasarkan data di atas, tolong berikan analisis keuangan terperinci dalam form
   ]
 }
 Berikan 3-4 saran yang berkualitas tinggi. Pastikan jenis 'type' sesuai dengan sifat informasi (danger untuk pengeluaran berlebih/defisit, warning untuk mendekati limit/tabungan seret, success untuk pencapaian target/surplus, info untuk informasi umum).
-PENTING: Hanya balas dengan objek JSON mentah yang valid, tanpa pembungkus markdown seperti \`\`\`json \`\`\`.`;
+PENTING: Hanya balas dengan objek JSON mentah yang valid, tanpa pembungkus markdown.`;
 
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: prompt,
+        const chatCompletion = await groq.chat.completions.create({
+          messages: [
+            { role: 'user', content: prompt }
+          ],
+          model: 'llama-3.1-8b-instant',
+          response_format: { type: 'json_object' }
         });
 
-        if (response && response.text) {
-          const cleanText = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
+        if (chatCompletion && chatCompletion.choices && chatCompletion.choices.length > 0) {
+          const cleanText = chatCompletion.choices[0].message.content;
           const parsed = JSON.parse(cleanText);
           if (parsed.insights && Array.isArray(parsed.insights)) {
             finalInsights = parsed.insights;
@@ -170,12 +173,12 @@ PENTING: Hanya balas dengan objek JSON mentah yang valid, tanpa pembungkus markd
             aiSummaryAnalysis = parsed.summary_analysis;
           }
         }
-      } catch (geminiError) {
-        console.error('Gemini API call failed, falling back to rule-based insights:', geminiError.message);
+      } catch (aiError) {
+        console.error('Groq API call failed, falling back to rule-based insights:', aiError.message);
         // Fallback remains as finalInsights = fallbackInsights
       }
     } else {
-      console.log('GEMINI_API_KEY is not defined. Using rule-based insights.');
+      console.log('GROQ_API_KEY is not defined. Using rule-based insights.');
     }
 
     return res.status(200).json({

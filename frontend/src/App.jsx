@@ -9,6 +9,7 @@ import Budgets from './pages/Budgets';
 import Goals from './pages/Goals';
 import Settings from './pages/Settings';
 import DebtLoans from './pages/DebtLoans';
+import Subscriptions from './pages/Subscriptions';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -37,6 +38,7 @@ function App() {
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/budgets" element={<Budgets />} />
         <Route path="/goals" element={<Goals />} />
+        <Route path="/subscriptions" element={<Subscriptions />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/debts-loans" element={<DebtLoans />} />
         <Route path="/login" element={<Login />} />

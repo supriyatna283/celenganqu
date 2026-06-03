@@ -61,11 +61,26 @@ export default function Goals() {
   const openEditModal = (g) => {
     setEditingGoal(g);
     setName(g.name);
-    setTargetAmount(parseFloat(g.target_amount));
+    setTargetAmount(Math.floor(parseFloat(g.target_amount)).toString());
     setTargetDate(g.target_date || '');
     setColor(g.color || '#1A56A0');
     setError('');
     setModalOpen(true);
+  };
+
+  const handleTargetAmountChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setTargetAmount(rawValue);
+  };
+
+  const handleDepositAmountChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setDepositAmount(rawValue);
+  };
+
+  const formatRupiahInput = (value) => {
+    if (!value) return '';
+    return new Intl.NumberFormat('id-ID').format(value);
   };
 
   const openDepositModal = (g) => {
@@ -324,10 +339,10 @@ export default function Goals() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Target Nominal (Rp)</label>
                   <input
-                    type="number"
+                    type="text"
                     placeholder="0"
-                    value={targetAmount}
-                    onChange={(e) => setTargetAmount(e.target.value)}
+                    value={formatRupiahInput(targetAmount)}
+                    onChange={handleTargetAmountChange}
                     className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
                     required
                   />
@@ -417,10 +432,10 @@ export default function Goals() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Nominal Tabungan (Rp)</label>
                   <input
-                    type="number"
+                    type="text"
                     placeholder="0"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
+                    value={formatRupiahInput(depositAmount)}
+                    onChange={handleDepositAmountChange}
                     className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
                     required
                   />

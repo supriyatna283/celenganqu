@@ -54,6 +54,31 @@ export default function Dashboard() {
     .filter(tx => tx.type === 'expense')
     .reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
 
+  // Calculate for previous month
+  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+  
+  const lastMonthTransactions = transactions.filter(tx => {
+    const txDate = new Date(tx.transaction_date);
+    return txDate.getMonth() === lastMonth && txDate.getFullYear() === lastMonthYear;
+  });
+
+  const lastMonthIncome = lastMonthTransactions
+    .filter(tx => tx.type === 'income')
+    .reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
+
+  const lastMonthExpense = lastMonthTransactions
+    .filter(tx => tx.type === 'expense')
+    .reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
+
+  const getPercentageChange = (current, previous) => {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return ((current - previous) / previous) * 100;
+  };
+
+  const incomeChange = getPercentageChange(totalIncome, lastMonthIncome);
+  const expenseChange = getPercentageChange(totalExpense, lastMonthExpense);
+
   const recentTransactions = transactions.slice(0, 5);
 
   // 1. Data Donut Chart (Distribusi Pengeluaran)
@@ -68,6 +93,32 @@ export default function Dashboard() {
   }));
 
   const DONUT_COLORS = ['#1A56A0', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085', '#7F8C8D'];
+
+  // 1.5 Data Perbandingan Kategori (Bulan Ini vs Bulan Lalu)
+  const categoryTotalsLastMonth = {};
+  lastMonthTransactions.filter(tx => tx.type === 'expense').forEach(tx => {
+    categoryTotalsLastMonth[tx.category] = (categoryTotalsLastMonth[tx.category] || 0) + parseFloat(tx.amount);
+  });
+
+  const categoryComparison = [];
+  const allCategories = new Set([...Object.keys(categoryTotals), ...Object.keys(categoryTotalsLastMonth)]);
+  
+  allCategories.forEach(cat => {
+    const current = categoryTotals[cat] || 0;
+    const previous = categoryTotalsLastMonth[cat] || 0;
+    const diff = current - previous;
+    const pctChange = getPercentageChange(current, previous);
+    categoryComparison.push({
+      category: cat,
+      current,
+      previous,
+      diff,
+      pctChange
+    });
+  });
+
+  // Sort by current month spending descending
+  categoryComparison.sort((a, b) => b.current - a.current);
 
   // 2. Data Area Chart (Tren Cash Flow 6 Bulan Terakhir)
   const generateTrendData = () => {
@@ -154,11 +205,18 @@ export default function Dashboard() {
             {loadingTransactions ? (
               <Skeleton className="h-8 w-36 mt-1" />
             ) : (
-              <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mt-1">
-                {formatIDR(totalIncome)}
-              </p>
+              <>
+                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mt-1">
+                  {formatIDR(totalIncome)}
+                </p>
+                <div className="flex items-center space-x-1.5 mt-2">
+                  <span className={`text-xs font-semibold flex items-center ${incomeChange >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-650 dark:text-rose-400'}`}>
+                    {incomeChange > 0 ? '+' : ''}{incomeChange.toFixed(1)}%
+                  </span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">vs bln lalu ({formatIDR(lastMonthIncome)})</span>
+                </div>
+              </>
             )}
-            <p className="text-xs text-slate-450 dark:text-slate-500 mt-2">Total pendapatan masuk</p>
           </div>
 
           {/* Pengeluaran */}
@@ -173,11 +231,18 @@ export default function Dashboard() {
             {loadingTransactions ? (
               <Skeleton className="h-8 w-36 mt-1" />
             ) : (
-              <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mt-1">
-                {formatIDR(totalExpense)}
-              </p>
+              <>
+                <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mt-1">
+                  {formatIDR(totalExpense)}
+                </p>
+                <div className="flex items-center space-x-1.5 mt-2">
+                  <span className={`text-xs font-semibold flex items-center ${expenseChange <= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-650 dark:text-rose-400'}`}>
+                    {expenseChange > 0 ? '+' : ''}{expenseChange.toFixed(1)}%
+                  </span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">vs bln lalu ({formatIDR(lastMonthExpense)})</span>
+                </div>
+              </>
             )}
-            <p className="text-xs text-slate-450 dark:text-slate-500 mt-2">Total pengeluaran belanja</p>
           </div>
         </div>
 
@@ -383,6 +448,61 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Monthly Comparison Table */}
+        <div className="bg-white/70 dark:bg-slate-900/40 border border-slate-150 dark:border-slate-800 p-6 rounded-3xl">
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">Laporan Perbandingan Bulanan (Pengeluaran)</h2>
+            <p className="text-xs text-slate-500">Membandingkan pengeluaran kategori bulan ini dengan bulan lalu.</p>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-700">
+                  <th className="pb-3 text-sm font-semibold text-slate-500 uppercase">Kategori</th>
+                  <th className="pb-3 text-sm font-semibold text-slate-500 uppercase text-right">Bulan Ini</th>
+                  <th className="pb-3 text-sm font-semibold text-slate-500 uppercase text-right">Bulan Lalu</th>
+                  <th className="pb-3 text-sm font-semibold text-slate-500 uppercase text-right">Selisih</th>
+                  <th className="pb-3 text-sm font-semibold text-slate-500 uppercase text-right">Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loadingTransactions ? (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-slate-500">Memuat data...</td>
+                  </tr>
+                ) : categoryComparison.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-slate-500 text-sm">Belum ada data pengeluaran untuk dibandingkan.</td>
+                  </tr>
+                ) : (
+                  categoryComparison.map((item, idx) => (
+                    <tr key={idx} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                      <td className="py-4 text-sm font-bold text-slate-900 dark:text-white">{item.category}</td>
+                      <td className="py-4 text-sm text-slate-700 dark:text-slate-300 text-right">{formatIDR(item.current)}</td>
+                      <td className="py-4 text-sm text-slate-500 text-right">{formatIDR(item.previous)}</td>
+                      <td className="py-4 text-sm text-right">
+                        <span className={item.diff > 0 ? 'text-rose-500' : item.diff < 0 ? 'text-emerald-500' : 'text-slate-500'}>
+                          {item.diff > 0 ? '+' : ''}{formatIDR(item.diff)}
+                        </span>
+                      </td>
+                      <td className="py-4 text-sm text-right">
+                        <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-semibold ${
+                          item.pctChange > 0 ? 'bg-rose-500/10 text-rose-600' : item.pctChange < 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                        }`}>
+                          {item.pctChange > 0 ? <ArrowUpRight className="w-3 h-3" /> : item.pctChange < 0 ? <ArrowDownRight className="w-3 h-3" /> : null}
+                          <span>{item.pctChange === 0 ? 'Tetap' : `${Math.abs(item.pctChange).toFixed(1)}%`}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </Layout>
   );

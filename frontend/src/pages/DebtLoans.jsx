@@ -56,8 +56,23 @@ export default function DebtLoans() {
 
   const openPayModal = (record) => {
     setSelectedRecord(record);
-    setPayAmount(parseFloat(record.remaining_amount).toString());
+    setPayAmount(Math.floor(parseFloat(record.remaining_amount)).toString());
     setPayModalOpen(true);
+  };
+
+  const handleAmountChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setAmount(rawValue);
+  };
+
+  const handlePayAmountChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setPayAmount(rawValue);
+  };
+
+  const formatRupiahInput = (value) => {
+    if (!value) return '';
+    return new Intl.NumberFormat('id-ID').format(value);
   };
 
   const handleAddSubmit = async (e) => {
@@ -308,10 +323,10 @@ export default function DebtLoans() {
                     Nominal Pinjaman (Rp)
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     required
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    value={formatRupiahInput(amount)}
+                    onChange={handleAmountChange}
                     placeholder="0"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
                   />
@@ -397,11 +412,10 @@ export default function DebtLoans() {
                     Nominal Pembayaran (Rp)
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     required
-                    value={payAmount}
-                    onChange={(e) => setPayAmount(e.target.value)}
-                    max={parseFloat(selectedRecord.remaining_amount)}
+                    value={formatRupiahInput(payAmount)}
+                    onChange={handlePayAmountChange}
                     placeholder="0"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
                   />

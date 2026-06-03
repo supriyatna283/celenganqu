@@ -15,8 +15,14 @@ import {
   RefreshCw, 
   Camera, 
   Scan,
-  Clock
+  Clock,
+  Download,
+  Upload,
+  Paperclip,
+  FileText
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import toast from 'react-hot-toast';
 import { SkeletonList } from '../components/Skeleton';
 
@@ -42,13 +48,16 @@ export default function Transactions() {
     createRecurringTemplate,
     deleteRecurringTemplate,
     toggleRecurringTemplate,
-    scanReceipt
+    scanReceipt,
+    exportCSV,
+    importCSV
   } = useFinanceStore();
 
   const [activeTab, setActiveTab] = useState('history'); // 'history' or 'recurring'
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [isRecurringModal, setIsRecurringModal] = useState(false);
+  const [isImportModal, setIsImportModal] = useState(false);
 
   // Form Fields
   const [accountId, setAccountId] = useState('');
@@ -59,6 +68,8 @@ export default function Transactions() {
   const [description, setDescription] = useState('');
   const [transactionDate, setTransactionDate] = useState(new Date().toISOString().split('T')[0]);
   const [frequency, setFrequency] = useState('monthly'); // 'daily', 'weekly', 'monthly', 'yearly'
+  const [attachment, setAttachment] = useState(null);
+  const [importFile, setImportFile] = useState(null);
   
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -98,6 +109,7 @@ export default function Transactions() {
     setCategory(expenseCategories[0] || 'Makanan');
     setDescription('');
     setTransactionDate(new Date().toISOString().split('T')[0]);
+    setAttachment(null);
     setError('');
     setModalOpen(true);
   };
@@ -123,12 +135,23 @@ export default function Transactions() {
     setAccountId(tx.account_id.toString());
     setDestAccountId(tx.destination_account_id?.toString() || '');
     setType(tx.type);
-    setAmount(parseFloat(tx.amount));
+    setAmount(Math.floor(parseFloat(tx.amount)).toString());
     setCategory(tx.category);
     setDescription(tx.description || '');
     setTransactionDate(tx.transaction_date);
+    setAttachment(null);
     setError('');
     setModalOpen(true);
+  };
+
+  const handleAmountChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setAmount(rawValue);
+  };
+
+  const formatRupiahInput = (value) => {
+    if (!value) return '';
+    return new Intl.NumberFormat('id-ID').format(value);
   };
 
   const handleSubmit = async (e) => {
@@ -178,22 +201,24 @@ export default function Transactions() {
       return;
     }
 
-    const txData = {
-      account_id: parseInt(accountId),
-      destination_account_id: type === 'transfer' ? parseInt(destAccountId) : null,
-      type,
-      amount: parseFloat(amount),
-      category: type === 'transfer' ? 'Transfer' : category,
-      description,
-      transaction_date: transactionDate
-    };
+    const formData = new FormData();
+    formData.append('account_id', parseInt(accountId));
+    if (type === 'transfer') formData.append('destination_account_id', parseInt(destAccountId));
+    formData.append('type', type);
+    formData.append('amount', parseFloat(amount));
+    formData.append('category', type === 'transfer' ? 'Transfer' : category);
+    formData.append('description', description);
+    formData.append('transaction_date', transactionDate);
+    if (attachment) {
+      formData.append('attachment', attachment);
+    }
 
     try {
       if (editingTransaction) {
-        await updateTransaction(editingTransaction.id, txData);
+        await updateTransaction(editingTransaction.id, formData);
         toast.success('Transaksi berhasil diperbarui!');
       } else {
-        await createTransaction(txData);
+        await createTransaction(formData);
         toast.success('Transaksi berhasil dicatat!');
       }
       setModalOpen(false);
@@ -266,6 +291,68 @@ export default function Transactions() {
     }).format(value);
   };
 
+  const handleExportCSV = async () => {
+    try {
+      await exportCSV();
+      toast.success('Berhasil mengekspor data.');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleExportPDF = () => {
+    try {
+      const doc = new jsPDF();
+      doc.text('Laporan Keuangan Duitku', 14, 15);
+      
+      const tableColumn = ['Tanggal', 'Tipe', 'Kategori', 'Akun', 'Jumlah', 'Deskripsi'];
+      const tableRows = [];
+
+      transactions.forEach(t => {
+        const rowData = [
+          t.transaction_date,
+          t.type === 'income' ? 'Pemasukan' : t.type === 'expense' ? 'Pengeluaran' : 'Transfer',
+          t.category,
+          t.account ? t.account.name : '',
+          formatIDR(t.amount),
+          t.description || ''
+        ];
+        tableRows.push(rowData);
+      });
+
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 20,
+        theme: 'grid',
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [26, 86, 160] }
+      });
+
+      doc.save(`Laporan_Transaksi_Duitku_${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success('Berhasil mengekspor PDF.');
+    } catch (err) {
+      console.error(err);
+      toast.error('Gagal membuat PDF: ' + err.message);
+    }
+  };
+
+  const handleImportCSV = async (e) => {
+    e.preventDefault();
+    if (!importFile) return;
+    setSubmitting(true);
+    try {
+      const result = await importCSV(importFile);
+      toast.success(result.message || 'Impor selesai.');
+      setIsImportModal(false);
+      setImportFile(null);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const getFrequencyText = (freq) => {
     const map = {
       daily: 'Harian',
@@ -285,15 +372,38 @@ export default function Transactions() {
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">Catatan Keuangan</h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Pantau transaksi dan atur rencana pengeluaran berulang Anda.</p>
           </div>
-          <div>
+          <div className="flex flex-wrap items-center gap-3">
             {activeTab === 'history' ? (
-              <button
-                onClick={openAddModal}
-                className="bg-[#1A56A0] hover:bg-[#164882] text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-[#1A56A0]/20 transition-all duration-200"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Tambah Transaksi</span>
-              </button>
+              <>
+                <button
+                  onClick={handleExportCSV}
+                  className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition-all duration-200"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline">Ekspor CSV</span>
+                </button>
+                <button
+                  onClick={handleExportPDF}
+                  className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition-all duration-200"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span className="hidden sm:inline">Ekspor PDF</span>
+                </button>
+                <button
+                  onClick={() => setIsImportModal(true)}
+                  className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition-all duration-200"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span className="hidden sm:inline">Impor CSV</span>
+                </button>
+                <button
+                  onClick={openAddModal}
+                  className="bg-[#1A56A0] hover:bg-[#164882] text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-[#1A56A0]/20 transition-all duration-200"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Tambah Transaksi</span>
+                </button>
+              </>
             ) : (
               <button
                 onClick={openAddRecurringModal}
@@ -450,6 +560,12 @@ export default function Transactions() {
                             )}
                           </div>
                           <span className="text-xs text-slate-500 mt-1 block max-w-sm truncate">{tx.description || '-'}</span>
+                          {tx.attachment_url && (
+                            <a href={`http://localhost:5000${tx.attachment_url}`} target="_blank" rel="noreferrer" className="inline-flex items-center space-x-1 text-[10px] font-medium text-[#1A56A0] dark:text-[#D6E4F7] mt-1.5 hover:underline">
+                              <Paperclip className="w-3 h-3" />
+                              <span>Lihat Lampiran</span>
+                            </a>
+                          )}
                         </div>
                       </div>
 
@@ -728,10 +844,10 @@ export default function Transactions() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">Jumlah Nominal (Rp)</label>
                   <input
-                    type="number"
+                    type="text"
                     placeholder="0"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    value={formatRupiahInput(amount)}
+                    onChange={handleAmountChange}
                     className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
                     required
                   />
@@ -763,6 +879,24 @@ export default function Transactions() {
                   />
                 </div>
 
+                {/* Attachment File Input */}
+                {!isRecurringModal && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">Foto Struk / Bukti (Opsional)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setAttachment(e.target.files[0])}
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2 px-3 text-sm outline-none file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                    />
+                    {editingTransaction?.attachment_url && !attachment && (
+                      <p className="text-[10px] text-slate-500">
+                        Sudah ada lampiran. Biarkan kosong jika tidak ingin mengubahnya.
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   disabled={submitting}
@@ -775,6 +909,65 @@ export default function Transactions() {
                     </>
                   ) : (
                     <span>{isRecurringModal ? 'Simpan Rencana' : editingTransaction ? 'Simpan Perubahan' : 'Catat Transaksi'}</span>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Import CSV */}
+        {isImportModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative">
+              <button
+                onClick={() => {
+                  setIsImportModal(false);
+                  setImportFile(null);
+                }}
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <h2 className="text-2xl font-bold font-outfit text-slate-950 dark:text-white mb-6">
+                Impor Data Transaksi (CSV)
+              </h2>
+
+              <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/30 mb-6">
+                <h4 className="text-sm font-bold text-indigo-700 dark:text-indigo-400 mb-2">Format CSV yang didukung:</h4>
+                <ul className="list-disc list-inside text-xs text-indigo-600 dark:text-indigo-300 space-y-1">
+                  <li>Kolom header harus ada: <span className="font-mono">Tanggal, Tipe, Kategori, Akun, Jumlah</span></li>
+                  <li>Kolom opsional: <span className="font-mono">AkunTujuan, Deskripsi</span></li>
+                  <li>Tipe valid: <span className="font-mono">Pemasukan, Pengeluaran, Transfer</span></li>
+                  <li>Tanggal format <span className="font-mono">YYYY-MM-DD</span></li>
+                </ul>
+              </div>
+
+              <form onSubmit={handleImportCSV} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">Pilih File CSV</label>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={(e) => setImportFile(e.target.files[0])}
+                    required
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2 px-3 text-sm outline-none file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting || !importFile}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg shadow-indigo-500/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Mengimpor...</span>
+                    </>
+                  ) : (
+                    <span>Mulai Impor Data</span>
                   )}
                 </button>
               </form>

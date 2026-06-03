@@ -14,8 +14,11 @@ import {
   Settings as SettingsIcon, 
   Sun, 
   Moon,
-  Handshake
+  Handshake,
+  Calendar,
 } from 'lucide-react';
+import NotificationBell from './NotificationBell';
+import AIChatbot from './AIChatbot';
 
 export default function Layout({ children }) {
   const { user, logout, isAuthenticated, initializeAuth } = useAuthStore();
@@ -54,6 +57,7 @@ export default function Layout({ children }) {
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Daftar Akun', path: '/accounts', icon: CreditCard },
     { name: 'Transaksi', path: '/transactions', icon: ArrowLeftRight },
+    { name: 'Langganan', path: '/subscriptions', icon: Calendar },
     { name: 'Anggaran', path: '/budgets', icon: Target },
     { name: 'Tujuan Tabungan', path: '/goals', icon: Coins },
     { name: 'Hutang & Piutang', path: '/debts-loans', icon: Handshake },
@@ -115,6 +119,10 @@ export default function Layout({ children }) {
               </>
             )}
           </button>
+          
+          <div className="flex items-center justify-center p-2 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800">
+            <NotificationBell />
+          </div>
 
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center font-bold text-slate-800 dark:text-[#D6E4F7] border border-slate-200 dark:border-slate-700">
@@ -157,6 +165,7 @@ export default function Layout({ children }) {
             >
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
+            <NotificationBell />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
@@ -210,6 +219,7 @@ export default function Layout({ children }) {
           {children}
         </main>
       </div>
+      <AIChatbot />
     </div>
   );
 }

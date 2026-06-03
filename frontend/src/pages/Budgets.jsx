@@ -6,9 +6,10 @@ import toast from 'react-hot-toast';
 import { SkeletonCard } from '../components/Skeleton';
 
 export default function Budgets() {
-  const { budgets, fetchBudgets, createBudget, updateBudget, deleteBudget, loadingBudgets, categories, fetchCategories } = useFinanceStore();
+  const { budgets, fetchBudgets, createBudget, updateBudget, deleteBudget, copyPreviousBudgets, loadingBudgets, categories, fetchCategories } = useFinanceStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
+  const [copying, setCopying] = useState(false);
 
   // Form Fields
   const [category, setCategory] = useState('Makanan');
@@ -35,9 +36,19 @@ export default function Budgets() {
   const openEditModal = (b) => {
     setEditingBudget(b);
     setCategory(b.category);
-    setAmountLimit(parseFloat(b.amount_limit));
+    setAmountLimit(Math.floor(parseFloat(b.amount_limit)).toString());
     setError('');
     setModalOpen(true);
+  };
+
+  const formatRupiahInput = (value) => {
+    if (!value) return '';
+    return new Intl.NumberFormat('id-ID').format(value);
+  };
+
+  const handleAmountLimitChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setAmountLimit(rawValue);
   };
 
   const handleSubmit = async (e) => {
@@ -81,6 +92,18 @@ export default function Budgets() {
       } catch (err) {
         toast.error(err.message || 'Gagal menghapus anggaran.');
       }
+    }
+  };
+
+  const handleCopyBudgets = async () => {
+    setCopying(true);
+    try {
+      const res = await copyPreviousBudgets(currentMonth, currentYear);
+      toast.success(res.message || 'Anggaran berhasil disalin!');
+    } catch (err) {
+      toast.error(err.message || 'Gagal menyalin anggaran.');
+    } finally {
+      setCopying(false);
     }
   };
 
@@ -133,12 +156,21 @@ export default function Budgets() {
               <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
                 Buat batasan bulanan (misal: budget belanja atau makan) agar pengeluaran Anda lebih terkontrol.
               </p>
-              <button
-                onClick={openAddModal}
-                className="mt-4 bg-[#1A56A0] hover:bg-[#164882] text-white px-4 py-2 rounded-xl text-xs font-semibold"
-              >
-                Buat Anggaran Pertama
-              </button>
+              <div className="flex justify-center space-x-3 mt-4">
+                <button
+                  onClick={handleCopyBudgets}
+                  disabled={copying}
+                  className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-semibold disabled:opacity-50"
+                >
+                  {copying ? 'Menyalin...' : 'Salin dari Bulan Lalu'}
+                </button>
+                <button
+                  onClick={openAddModal}
+                  className="bg-[#1A56A0] hover:bg-[#164882] text-white px-4 py-2 rounded-xl text-xs font-semibold"
+                >
+                  Buat Anggaran Pertama
+                </button>
+              </div>
             </div>
           ) : (
             budgets.map(b => {
@@ -270,10 +302,10 @@ export default function Budgets() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Limit Anggaran (Rp)</label>
                   <input
-                    type="number"
+                    type="text"
                     placeholder="misal: 1000000"
-                    value={amountLimit}
-                    onChange={(e) => setAmountLimit(e.target.value)}
+                    value={formatRupiahInput(amountLimit)}
+                    onChange={handleAmountLimitChange}
                     className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-[#1A56A0]"
                     required
                   />

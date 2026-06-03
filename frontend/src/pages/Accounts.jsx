@@ -1,20 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useFinanceStore } from '../store/financeStore';
 import Layout from '../components/Layout';
-import { Plus, Trash2, Edit3, X, CreditCard, Sparkles, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Edit3, X, CreditCard, Sparkles, Loader2, UserPlus, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { SkeletonCard } from '../components/Skeleton';
 
 export default function Accounts() {
-  const { accounts, fetchAccounts, createAccount, updateAccount, deleteAccount, loadingAccounts } = useFinanceStore();
+  const { accounts, fetchAccounts, createAccount, updateAccount, deleteAccount, shareAccount, loadingAccounts } = useFinanceStore();
   const [modalOpen, setModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
+  const [activeAccountId, setActiveAccountId] = useState(null);
 
   // Form Fields
   const [name, setName] = useState('');
   const [type, setType] = useState('savings');
   const [balance, setBalance] = useState('');
   const [color, setColor] = useState('#1A56A0');
+  
+  // Share Form Fields
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareRole, setShareRole] = useState('editor');
+
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -78,6 +85,30 @@ export default function Accounts() {
       } catch (err) {
         toast.error(err.message || 'Gagal menghapus akun.');
       }
+    }
+  };
+
+  const openShareModal = (id) => {
+    setActiveAccountId(id);
+    setShareEmail('');
+    setShareRole('editor');
+    setError('');
+    setShareModalOpen(true);
+  };
+
+  const handleShare = async (e) => {
+    e.preventDefault();
+    if (!shareEmail) return;
+    setSubmitting(true);
+    setError('');
+    try {
+      const result = await shareAccount(activeAccountId, shareEmail, shareRole);
+      toast.success(result.message || 'Akun berhasil dibagikan!');
+      setShareModalOpen(false);
+    } catch (err) {
+      setError(err.message || 'Gagal membagikan akun.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -147,26 +178,44 @@ export default function Accounts() {
 
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-xs font-semibold text-slate-400 capitalize block">{acc.type}</span>
+                    <span className="text-xs font-semibold text-slate-400 capitalize block flex items-center space-x-1">
+                      <span>{acc.type}</span>
+                      {acc.is_shared && (
+                        <>
+                          <span>•</span>
+                          <Users className="w-3 h-3 text-indigo-400" />
+                          <span className="text-indigo-400">Shared by {acc.owner?.name}</span>
+                        </>
+                      )}
+                    </span>
                     <h3 className="text-xl font-bold mt-1 text-white truncate max-w-[180px]">{acc.name}</h3>
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => openEditModal(acc)}
-                      className="p-2 text-slate-400 hover:text-white bg-slate-800/40 rounded-lg hover:bg-slate-800 transition-colors"
-                      title="Edit Akun"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(acc.id)}
-                      className="p-2 text-slate-400 hover:text-red-400 bg-slate-800/40 rounded-lg hover:bg-red-500/10 transition-colors"
-                      title="Hapus Akun"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                  {!acc.is_shared && (
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => openShareModal(acc.id)}
+                        className="p-2 text-indigo-400 hover:text-white bg-indigo-500/10 rounded-lg hover:bg-indigo-500/30 transition-colors"
+                        title="Bagikan Akun"
+                      >
+                        <UserPlus className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => openEditModal(acc)}
+                        className="p-2 text-slate-400 hover:text-white bg-slate-800/40 rounded-lg hover:bg-slate-800 transition-colors"
+                        title="Edit Akun"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(acc.id)}
+                        className="p-2 text-slate-400 hover:text-red-400 bg-slate-800/40 rounded-lg hover:bg-red-500/10 transition-colors"
+                        title="Hapus Akun"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-8">
@@ -180,7 +229,6 @@ export default function Accounts() {
           )}
         </div>
 
-        {/* Modal (Add / Edit) */}
         {modalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative">
@@ -269,6 +317,75 @@ export default function Accounts() {
                     </>
                   ) : (
                     <span>{editingAccount ? 'Simpan Perubahan' : 'Buat Akun'}</span>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Share Modal */}
+        {shareModalOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative">
+              <button
+                onClick={() => setShareModalOpen(false)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="mb-6 text-center">
+                <div className="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-indigo-400" />
+                </div>
+                <h2 className="text-2xl font-bold font-outfit text-white">Bagikan Akun</h2>
+                <p className="text-slate-400 text-sm mt-1">Undang pasangan atau partner bisnis untuk mencatat bersama di akun ini.</p>
+              </div>
+
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-2.5 rounded-xl mb-4 text-center">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleShare} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Email Pengguna Duitku</label>
+                  <input
+                    type="email"
+                    placeholder="misal: istri@email.com"
+                    value={shareEmail}
+                    onChange={(e) => setShareEmail(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Hak Akses</label>
+                  <select
+                    value={shareRole}
+                    onChange={(e) => setShareRole(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500"
+                  >
+                    <option value="editor">Editor (Bisa mencatat transaksi)</option>
+                    <option value="viewer">Viewer (Hanya bisa melihat)</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg flex items-center justify-center mt-6 disabled:opacity-50 space-x-2 transition-all"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Mengirim Undangan...</span>
+                    </>
+                  ) : (
+                    <span>Bagikan Sekarang</span>
                   )}
                 </button>
               </form>

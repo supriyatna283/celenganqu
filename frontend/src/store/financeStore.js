@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 export const useFinanceStore = create((set, get) => ({
   accounts: [],
   transactions: [],
+  recurrings: [],
   budgets: [],
   goals: [],
   categories: [],
@@ -99,6 +100,16 @@ export const useFinanceStore = create((set, get) => ({
     }
   },
 
+  shareAccount: async (id, email, role) => {
+    try {
+      const response = await api.post(`/accounts/${id}/share`, { email, role });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      throw new Error(err.response?.data?.message || 'Gagal membagikan akun.');
+    }
+  },
+
   // Transactions CRUD
   fetchTransactions: async () => {
     set({ loadingTransactions: true, error: null });
@@ -123,7 +134,10 @@ export const useFinanceStore = create((set, get) => ({
 
   createTransaction: async (transactionData) => {
     try {
-      const response = await api.post('/transactions', transactionData);
+      const isFormData = transactionData instanceof FormData;
+      const response = await api.post('/transactions', transactionData, {
+        headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined
+      });
       set((state) => ({
         transactions: [response.data, ...state.transactions]
       }));
@@ -140,7 +154,10 @@ export const useFinanceStore = create((set, get) => ({
 
   updateTransaction: async (id, transactionData) => {
     try {
-      const response = await api.put(`/transactions/${id}`, transactionData);
+      const isFormData = transactionData instanceof FormData;
+      const response = await api.put(`/transactions/${id}`, transactionData, {
+        headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined
+      });
       set((state) => ({
         transactions: state.transactions.map((tx) => tx.id === id ? response.data : tx)
       }));
@@ -168,6 +185,89 @@ export const useFinanceStore = create((set, get) => ({
     } catch (err) {
       console.error(err);
       throw new Error(err.response?.data?.message || 'Gagal menghapus transaksi.');
+    }
+  },
+
+  exportCSV: async () => {
+    try {
+      const response = await api.get('/transactions/export', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Transaksi_Duitku_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error(err);
+      throw new Error('Gagal mengekspor data.');
+    }
+  },
+
+  importCSV: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await api.post('/transactions/import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      get().fetchTransactions();
+      get().fetchAccounts();
+      get().fetchBudgets();
+      get().fetchInsights();
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      throw new Error(err.response?.data?.message || 'Gagal mengimpor data.');
+    }
+  },
+
+  // Recurring Transactions
+  fetchRecurrings: async () => {
+    try {
+      set({ loadingRecurrings: true });
+      const response = await api.get('/recurring');
+      set({ recurrings: response.data, loadingRecurrings: false });
+    } catch (err) {
+      console.error(err);
+      set({ loadingRecurrings: false });
+    }
+  },
+
+  createRecurring: async (data) => {
+    try {
+      const response = await api.post('/recurring', data);
+      set((state) => ({
+        recurrings: [response.data, ...state.recurrings]
+      }));
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      throw new Error(err.response?.data?.message || 'Gagal membuat tagihan rutin.');
+    }
+  },
+
+  toggleRecurring: async (id) => {
+    try {
+      const response = await api.patch(`/recurring/${id}/toggle`);
+      set((state) => ({
+        recurrings: state.recurrings.map(r => r.id === id ? { ...r, is_active: response.data.is_active } : r)
+      }));
+    } catch (err) {
+      console.error(err);
+      throw new Error(err.response?.data?.message || 'Gagal mengubah status tagihan.');
+    }
+  },
+
+  deleteRecurring: async (id) => {
+    try {
+      await api.delete(`/recurring/${id}`);
+      set((state) => ({
+        recurrings: state.recurrings.filter(r => r.id !== id)
+      }));
+    } catch (err) {
+      console.error(err);
+      throw new Error(err.response?.data?.message || 'Gagal menghapus tagihan rutin.');
     }
   },
 
@@ -215,12 +315,22 @@ export const useFinanceStore = create((set, get) => ({
   deleteBudget: async (id) => {
     try {
       await api.delete(`/budgets/${id}`);
-      set((state) => ({
-        budgets: state.budgets.filter((b) => b.id !== id)
-      }));
     } catch (err) {
       console.error(err);
+      toast.error('Gagal menghapus anggaran');
       throw new Error(err.response?.data?.message || 'Gagal menghapus anggaran.');
+    }
+  },
+
+  copyPreviousBudgets: async (month, year) => {
+    try {
+      const res = await api.post('/budgets/copy-last-month', { month, year });
+      // After success, re-fetch budgets
+      await get().fetchBudgets(month, year);
+      return res.data;
+    } catch (error) {
+      console.error('copyPreviousBudgets err:', error);
+      throw new Error(error.response?.data?.message || 'Gagal menyalin anggaran');
     }
   },
 
