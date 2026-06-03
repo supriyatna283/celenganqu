@@ -45,7 +45,7 @@ export default function Home() {
 
       {/* Main dashboard content */}
       <main className="flex-1 p-8 max-w-4xl mx-auto w-full flex flex-col justify-center items-center text-center">
-        <div className="bg-slate-900/60 border border-slate-800 p-8 rounded-3xl shadow-xl w-full max-w-lg backdrop-blur-xl">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl shadow-xl w-full max-w-lg backdrop-blur-xl">
           <div className="w-20 h-20 bg-primary/10 text-primary-light rounded-full flex items-center justify-center mx-auto mb-6">
             <UserIcon className="w-10 h-10" />
           </div>

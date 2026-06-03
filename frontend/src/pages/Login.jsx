@@ -50,17 +50,17 @@ export default function Login() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main glass card */}
-      <div className="w-full max-w-md bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl relative z-10 transition-all duration-300 hover:border-slate-700">
+      <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative z-10 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-700">
         
         {/* Logo/Header */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-16 h-16 mb-4 transform hover:rotate-12 transition-transform duration-300 flex items-center justify-center">
             <img src={logoImg} className="w-full h-full object-contain" alt="CelenganQu Logo" />
           </div>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight font-outfit">
+          <h2 className="text-4xl font-black font-outfit text-slate-900 dark:text-white tracking-tight font-outfit">
             Celengan<span className="text-primary-light font-medium">Qu</span>
           </h2>
-          <p className="text-slate-400 text-sm mt-2 text-center">
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium text-center">
             Aplikasi Manajemen Keuangan Pribadi yang Cepat & Aman
           </p>
         </div>
@@ -74,7 +74,7 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email input */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300 tracking-wider uppercase block">Email</label>
+            <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 tracking-wider uppercase block">Email</label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                 <Mail className="w-5 h-5 text-slate-500" />
@@ -84,7 +84,7 @@ export default function Login() {
                 placeholder="nama@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-3 pl-11 pr-4 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-600"
+                className="w-full bg-white/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-3 pl-11 pr-4 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-400 dark:placeholder:text-slate-600"
                 required
               />
             </div>
@@ -93,7 +93,7 @@ export default function Login() {
           {/* Password input */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-slate-300 tracking-wider uppercase block">Password</label>
+              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2 block">Password</label>
               <a href="#" className="text-xs text-primary-light hover:underline">Lupa Password?</a>
             </div>
             <div className="relative">
@@ -105,7 +105,7 @@ export default function Login() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-950/50 border border-slate-800 text-white rounded-xl py-3 pl-11 pr-12 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-600"
+                className="w-full bg-white/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-3 pl-11 pr-12 outline-none transition-all duration-200 focus:border-primary focus:ring-1 focus:ring-primary/20 placeholder:text-slate-400 dark:placeholder:text-slate-600"
                 required
               />
               <button
@@ -135,12 +135,12 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-slate-500">
+        <p className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
           Belum punya akun?{' '}
-          <Link to="/register" className="text-primary-light hover:underline font-medium">
+          <Link to="/register" className="text-primary hover:text-primary-dark dark:hover:text-primary-light font-bold transition-colors">
             Daftar Sekarang
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );

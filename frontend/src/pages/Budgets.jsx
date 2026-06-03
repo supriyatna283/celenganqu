@@ -150,7 +150,7 @@ export default function Budgets() {
               <SkeletonCard />
             </>
           ) : budgets.length === 0 ? (
-            <div className="col-span-full bg-slate-900/30 border border-slate-800 rounded-3xl p-12 text-center">
+            <div className="col-span-full bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
               <CheckCircle className="w-12 h-12 text-emerald-500/80 mx-auto mb-4" />
               <h3 className="text-lg font-bold">Belum ada anggaran bulanan</h3>
               <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
@@ -264,7 +264,7 @@ export default function Budgets() {
         {/* Modal */}
         {modalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative">
+            <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
               <button
                 onClick={() => setModalOpen(false)}
                 className="absolute top-6 right-6 text-slate-400 hover:text-white"
@@ -289,7 +289,7 @@ export default function Budgets() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                       required
                     >
                       {categoriesList.map(cat => (
@@ -306,7 +306,7 @@ export default function Budgets() {
                     placeholder="misal: 1000000"
                     value={formatRupiahInput(amountLimit)}
                     onChange={handleAmountLimitChange}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>

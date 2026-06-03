@@ -202,7 +202,7 @@ export default function Goals() {
               <SkeletonCard />
             </>
           ) : goals.length === 0 ? (
-            <div className="col-span-full bg-slate-900/30 border border-slate-800 rounded-3xl p-12 text-center">
+            <div className="col-span-full bg-slate-50 dark:bg-slate-900/30 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
               <PiggyBank className="w-12 h-12 text-slate-600 mx-auto mb-4" />
               <h3 className="text-lg font-bold">Belum ada target tabungan</h3>
               <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
@@ -224,7 +224,7 @@ export default function Goals() {
               return (
                 <div
                   key={g.id}
-                  className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-all duration-300"
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-all duration-300"
                 >
                   {/* Goal Accent Color Top */}
                   <div className="absolute top-0 inset-x-0 h-1.5" style={{ backgroundColor: g.color }} />
@@ -305,7 +305,7 @@ export default function Goals() {
         {/* Modal Goal (Add / Edit) */}
         {modalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative">
+            <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
               <button
                 onClick={() => setModalOpen(false)}
                 className="absolute top-6 right-6 text-slate-400 hover:text-white"
@@ -331,7 +331,7 @@ export default function Goals() {
                     placeholder="misal: Beli Motor, Dana Darurat"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -343,7 +343,7 @@ export default function Goals() {
                     placeholder="0"
                     value={formatRupiahInput(targetAmount)}
                     onChange={handleTargetAmountChange}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
@@ -354,7 +354,7 @@ export default function Goals() {
                     type="date"
                     value={targetDate}
                     onChange={(e) => setTargetDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                   />
                 </div>
 
@@ -397,7 +397,7 @@ export default function Goals() {
         {/* Modal Deposit (Tabung Uang) */}
         {depositModalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative">
+            <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative max-h-[90vh] flex flex-col overflow-y-auto">
               <button
                 onClick={() => setDepositModalOpen(false)}
                 className="absolute top-6 right-6 text-slate-400 hover:text-white"
@@ -420,7 +420,7 @@ export default function Goals() {
                   <select
                     value={sourceAccountId}
                     onChange={(e) => setSourceAccountId(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   >
                     {accounts.map(acc => (
@@ -436,7 +436,7 @@ export default function Goals() {
                     placeholder="0"
                     value={formatRupiahInput(depositAmount)}
                     onChange={handleDepositAmountChange}
-                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
