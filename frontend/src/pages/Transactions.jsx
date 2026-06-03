@@ -626,20 +626,20 @@ export default function Transactions() {
                             </div>
                           </div>
 
-                          <div className="hidden md:flex items-center space-x-1">
+                          <div className="hidden md:flex items-center space-x-2">
                             <button
                               onClick={() => openEditModal(tx)}
-                              className="p-2 text-slate-400 hover:text-slate-800 dark:hover:text-white bg-slate-100/50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors pointer-events-auto"
+                              className="p-2.5 text-slate-400 hover:text-white bg-slate-100 dark:bg-slate-800/50 rounded-xl hover:bg-indigo-500 dark:hover:bg-indigo-500 transition-all pointer-events-auto shadow-sm hover:shadow-indigo-500/20"
                               title="Edit"
                             >
-                              <Edit3 className="w-3.5 h-3.5" />
+                              <Edit3 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleDelete(tx.id)}
-                              className="p-2 text-slate-400 hover:text-red-500 bg-slate-100/50 dark:bg-slate-800/30 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors pointer-events-auto"
+                              className="p-2.5 text-slate-400 hover:text-white bg-slate-100 dark:bg-slate-800/50 rounded-xl hover:bg-red-500 dark:hover:bg-red-500 transition-all pointer-events-auto shadow-sm hover:shadow-red-500/20"
                               title="Hapus"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </div>
@@ -745,22 +745,24 @@ export default function Transactions() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 100, scale: 0.95 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative"
+                className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative max-h-[90vh] flex flex-col"
               >
               <button
                 onClick={() => setModalOpen(false)}
-                className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 dark:hover:text-white z-10 bg-white/50 dark:bg-slate-900/50 rounded-full p-1 backdrop-blur"
               >
                 <X className="w-6 h-6" />
               </button>
 
-              <h2 className="text-2xl font-bold font-outfit text-slate-950 dark:text-white mb-6">
+              <h2 className="text-xl md:text-2xl font-bold font-outfit text-slate-950 dark:text-white mb-6 shrink-0 pr-8">
                 {isRecurringModal 
                   ? 'Rencana Transaksi Baru' 
                   : editingTransaction 
                     ? 'Edit Catatan Transaksi' 
                     : 'Tambah Transaksi'}
               </h2>
+
+              <div className="overflow-y-auto pr-2 -mr-2 space-y-4 pb-2">
 
               {error && (
                 <div className="bg-red-500/10 border border-red-500/20 text-red-650 dark:text-red-400 text-xs px-4 py-2.5 rounded-xl mb-4">
@@ -974,6 +976,7 @@ export default function Transactions() {
                   )}
                 </button>
               </form>
+              </div>
               </motion.div>
             </div>
           )}
