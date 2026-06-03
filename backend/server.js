@@ -27,6 +27,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Prevent caching for all API routes (especially for Hugging Face/Cloudflare caching)
+app.use((req, res, next) => {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Pragma', 'no-cache');
+  res.header('Expires', '0');
+  next();
+});
 // Static Folder for Uploads
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

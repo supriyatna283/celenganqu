@@ -54,9 +54,12 @@ export default function AIChatbot() {
       setMessages(prev => [...prev, { role: 'ai', text: reply }]);
 
       if (intent === 'log_transaction') {
-        fetchTransactions();
-        fetchAccounts();
-        fetchBudgets();
+        // Tambah delay kecil agar backend selesai commit sebelum refetch
+        setTimeout(() => {
+          fetchTransactions();
+          fetchAccounts();
+          fetchBudgets();
+        }, 800);
         toast.success('Transaksi berhasil dicatat oleh AI!');
       }
 

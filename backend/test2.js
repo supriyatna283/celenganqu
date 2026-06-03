@@ -1,0 +1,1 @@
+require('./config/database').query("SELECT id, description, transaction_date FROM transactions WHERE user_id = 1010627 AND transaction_date >= '2026-06-04'").then(r => console.log(r[0])).catch(console.error).finally(() => process.exit());
