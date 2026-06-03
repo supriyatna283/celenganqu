@@ -101,10 +101,23 @@ exports.processChatMessage = async (req, res) => {
       console.log("Extracted Data:", { type, amount, account_id, category, description });
 
       // AI seringkali gagal menentukan account_id jika pengguna tidak menyebutkannya.
-      // Solusi: Gunakan akun pertama sebagai default jika account_id kosong.
-      if (!account_id && allAccounts.length > 0) {
-        account_id = allAccounts[0].id;
-        console.log("Applied fallback account_id:", account_id);
+      // Atau AI memilih ID yang salah (misal: 1, 2) yang bukan milik user.
+      // Validasi: pastikan account_id yang dipilih AI ada di daftar akun user.
+      const validAccountIds = allAccounts.map(a => a.id);
+      if (!account_id || !validAccountIds.includes(parseInt(account_id))) {
+        // Coba cocokkan nama akun dari 'reply' AI dengan nama akun user
+        const replyLower = (aiResponse.reply || '').toLowerCase();
+        const matchedAccount = allAccounts.find(a => replyLower.includes(a.name.toLowerCase()));
+        if (matchedAccount) {
+          account_id = matchedAccount.id;
+          console.log("Matched account_id from reply text:", account_id, matchedAccount.name);
+        } else {
+          account_id = allAccounts[0].id;
+          console.log("Applied fallback account_id (first account):", account_id);
+        }
+      } else {
+        account_id = parseInt(account_id);
+        console.log("Validated account_id:", account_id);
       }
 
       // Pastikan category terisi, jika tidak fallback ke 'Lainnya'
