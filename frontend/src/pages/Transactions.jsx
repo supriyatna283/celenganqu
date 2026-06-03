@@ -943,23 +943,6 @@ export default function Transactions() {
                   />
                 </div>
 
-                {/* Attachment File Input */}
-                {!isRecurringModal && (
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">Foto Struk / Bukti (Opsional)</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setAttachment(e.target.files[0])}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-250 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2 px-3 text-sm outline-none file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                    />
-                    {editingTransaction?.attachment_url && !attachment && (
-                      <p className="text-[10px] text-slate-500">
-                        Sudah ada lampiran. Biarkan kosong jika tidak ingin mengubahnya.
-                      </p>
-                    )}
-                  </div>
-                )}
 
                 <button
                   type="submit"
