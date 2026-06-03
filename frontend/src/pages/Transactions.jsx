@@ -25,6 +25,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import toast from 'react-hot-toast';
 import { SkeletonList } from '../components/Skeleton';
+import LiveReceiptScanner from '../components/LiveReceiptScanner';
 
 export default function Transactions() {
   const {
@@ -58,6 +59,7 @@ export default function Transactions() {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [isRecurringModal, setIsRecurringModal] = useState(false);
   const [isImportModal, setIsImportModal] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
 
   // Form Fields
   const [accountId, setAccountId] = useState('');
@@ -277,6 +279,28 @@ export default function Transactions() {
         if (parsedData.date) setTransactionDate(parsedData.date);
         
         toast.success('Struk berhasil dipindai dengan AI!');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Gagal memindai struk. Pastikan key API Gemini terkonfigurasi.');
+    }
+  };
+
+  const handleCameraCapture = async (file) => {
+    setIsCameraOpen(false);
+    if (!file) return;
+
+    try {
+      const parsedData = await scanReceipt(file);
+      if (parsedData) {
+        if (parsedData.amount) setAmount(parsedData.amount.toString());
+        if (parsedData.category) {
+          const matched = expenseCategories.find(c => c.toLowerCase() === parsedData.category.toLowerCase());
+          setCategory(matched || expenseCategories[expenseCategories.length - 1] || 'Lainnya');
+        }
+        if (parsedData.description) setDescription(parsedData.description);
+        if (parsedData.date) setTransactionDate(parsedData.date);
+        
+        toast.success('Struk berhasil dipindai dengan kamera AI!');
       }
     } catch (err) {
       toast.error(err.message || 'Gagal memindai struk. Pastikan key API Gemini terkonfigurasi.');
@@ -747,26 +771,37 @@ export default function Transactions() {
                       <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Pindai Struk dengan AI</span>
                       <span className="text-[10px] text-slate-500 dark:text-slate-400">Ekstrak otomatis jumlah, tanggal, & kategori</span>
                     </div>
-                    <label className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-750 text-white text-xs font-bold rounded-lg cursor-pointer transition disabled:opacity-50">
-                      {loadingScan ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>Memindai...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Scan className="w-3.5 h-3.5" />
-                          <span>Pilih Foto</span>
-                        </>
-                      )}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleReceiptScan}
-                        className="hidden"
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsCameraOpen(true)}
                         disabled={loadingScan}
-                      />
-                    </label>
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg cursor-pointer transition disabled:opacity-50 shadow-md shadow-slate-800/20"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Kamera</span>
+                      </button>
+                      <label className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-750 text-white text-xs font-bold rounded-lg cursor-pointer transition disabled:opacity-50 shadow-md shadow-indigo-600/20">
+                        {loadingScan ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>Memindai...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Scan className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Pilih Foto</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleReceiptScan}
+                          className="hidden"
+                          disabled={loadingScan}
+                        />
+                      </label>
+                    </div>
                   </div>
                 )}
 
@@ -975,6 +1010,14 @@ export default function Transactions() {
           </div>
         )}
       </div>
+
+      {/* Camera Modal */}
+      {isCameraOpen && (
+        <LiveReceiptScanner 
+          onClose={() => setIsCameraOpen(false)} 
+          onCapture={handleCameraCapture} 
+        />
+      )}
     </Layout>
   );
 }

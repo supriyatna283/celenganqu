@@ -132,8 +132,8 @@ exports.getInsights = async (req, res) => {
       try {
         const Groq = require('groq-sdk');
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-        
-        const prompt = `Anda adalah 'Duitku AI', asisten perencana keuangan pribadi premium yang cerdas dan bersahabat. Berikut adalah ringkasan keuangan pengguna bulan ini (Bulan: ${month}, Tahun: ${year}):
+
+        const prompt = `Anda adalah 'CelenganQu', asisten perencana keuangan pribadi premium yang cerdas dan bersahabat. Berikut adalah ringkasan keuangan pengguna bulan ini (Bulan: ${month}, Tahun: ${year}):
 - Total Pemasukan: Rp${totalIncome.toLocaleString('id-ID')}
 - Total Pengeluaran: Rp${totalExpense.toLocaleString('id-ID')}
 - Tabungan Bersih: Rp${netSavings.toLocaleString('id-ID')}

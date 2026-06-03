@@ -6,7 +6,7 @@ const Account = require('../models/Account');
 exports.processRecurringTransactions = async (userId) => {
   try {
     const todayStr = new Date().toISOString().split('T')[0];
-    
+
     // Find active templates that are due
     const dueTemplates = await RecurringTransaction.findAll({
       where: {
@@ -53,7 +53,7 @@ exports.processRecurringTransactions = async (userId) => {
 
         // Keep track of the last run date
         template.last_run_date = runDateStr;
-        
+
         // Advance currentNextRun based on frequency
         if (template.frequency === 'daily') {
           currentNextRun.setDate(currentNextRun.getDate() + 1);

@@ -18,7 +18,12 @@ require('./models/SharedAccount');
 const app = express();
 
 // Middleware
-app.use(cors());
+// Setup CORS dynamically to allow Vercel frontend or fallback to generic
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -59,20 +64,17 @@ app.get('/', (req, res) => {
   res.json({ message: 'Selamat datang di Duitku API' });
 });
 
-// Database Sync and Server Listen
-const PORT = process.env.PORT || 5000;
-
+// Database Sync and Server Start
+// NOTE: { alter: true } is REMOVED to prevent ER_TOO_MANY_KEYS errors in production
 const { startCron } = require('./cron/recurringCron');
 
-sequelize.sync()
-  .then(() => {
-    console.log('Database synced successfully.');
-    startCron(); // Start cron jobs
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}.`);
-    });
-  })
-  .catch((err) => {
-    console.error('Failed to sync database:', err);
-  });
-// Trigger nodemon restart after database keys fix and env updates
+sequelize.sync().then(() => {
+  console.log('Database terhubung.');
+  startCron(); // Start cron jobs
+  
+  // Gunakan PORT dari Hugging Face/Environment, jika tidak ada gunakan 7860
+  const PORT = process.env.PORT || 7860;
+  app.listen(PORT, () => console.log(`Server berjalan di port ${PORT}`));
+}).catch(err => {
+  console.error('Gagal menghubungkan ke database:', err);
+});

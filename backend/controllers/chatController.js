@@ -15,18 +15,18 @@ exports.processChatMessage = async (req, res) => {
 
     // Fetch user context
     const userAccounts = await Account.findAll({ where: { user_id: req.user.id, is_active: true } });
-    const sharedAccounts = await SharedAccount.findAll({ 
+    const sharedAccounts = await SharedAccount.findAll({
       where: { user_id: req.user.id },
       include: [{ model: Account, as: 'account', where: { is_active: true } }]
     });
-    
+
     const allAccounts = [
       ...userAccounts.map(a => ({ id: a.id, name: a.name, balance: a.balance })),
       ...sharedAccounts.map(s => ({ id: s.account.id, name: s.account.name, balance: s.account.balance, shared: true }))
     ];
 
     const categories = await Category.findAll({ where: { user_id: req.user.id } });
-    
+
     // Fetch budgets for this month
     const today = new Date();
     const currentMonth = today.getMonth() + 1;
@@ -51,7 +51,7 @@ exports.processChatMessage = async (req, res) => {
     }));
 
     const systemPrompt = `
-    Anda adalah asisten keuangan pribadi bernama "Duitku AI".
+    Anda adalah asisten keuangan pribadi bernama "CelenganQu".
     Pengguna akan memberikan pernyataan (seperti mencatat transaksi) atau pertanyaan (seperti "Apakah saya mampu beli X?").
     
     Data Akun Pengguna:
@@ -93,11 +93,11 @@ exports.processChatMessage = async (req, res) => {
     // If intent is log_transaction, we actually save it to DB
     if (aiResponse.intent === 'log_transaction' && aiResponse.transaction_data) {
       const { type, amount, account_id, category, description } = aiResponse.transaction_data;
-      
+
       // Basic validation
       if (account_id) {
         const txDate = new Date().toISOString().split('T')[0];
-        
+
         // Use the existing logic to create transaction
         await Transaction.create({
           user_id: req.user.id,
@@ -123,7 +123,7 @@ exports.processChatMessage = async (req, res) => {
   } catch (error) {
     console.error('Chat error:', error);
     if (error.message && error.message.includes('429 Too Many Requests')) {
-      return res.status(429).json({ 
+      return res.status(429).json({
         message: 'Batas harian penggunaan AI telah habis (limit kuota gratis). Silakan coba lagi nanti.',
         reply: 'Maaf ya, batas mikir aku hari ini udah habis karena pembatasan kuota Google API. Coba lagi dalam beberapa saat ya! 😅'
       });

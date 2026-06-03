@@ -7,12 +7,12 @@ import toast from 'react-hot-toast';
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'ai', text: 'Halo! Saya Duitku AI. Kamu bisa mencatat transaksi atau tanya soal anggaranmu ke saya.' }
+    { role: 'ai', text: 'Halo! Saya CelenganQu. Kamu bisa mencatat transaksi atau tanya soal anggaranmu ke saya.' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  
+
   const messagesEndRef = useRef(null);
   const { fetchTransactions, fetchAccounts, fetchBudgets } = useFinanceStore();
 
@@ -26,7 +26,7 @@ export default function AIChatbot() {
 
   const handleSend = async (text = input) => {
     if (!text.trim()) return;
-    
+
     const userMsg = { role: 'user', text };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
@@ -35,7 +35,7 @@ export default function AIChatbot() {
     try {
       const response = await api.post('/chat/message', { message: text });
       const { reply, intent, transaction_data } = response.data;
-      
+
       setMessages(prev => [...prev, { role: 'ai', text: reply }]);
 
       if (intent === 'log_transaction') {
@@ -68,7 +68,7 @@ export default function AIChatbot() {
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => setIsListening(true);
-    
+
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       handleSend(transcript);
@@ -77,7 +77,13 @@ export default function AIChatbot() {
     recognition.onerror = (event) => {
       console.error('Speech error', event.error);
       setIsListening(false);
-      toast.error('Gagal mengenali suara.');
+      if (event.error === 'network') {
+        toast.error('Gagal mengenali suara: Koneksi internet atau layanan pengenalan suara browser tidak tersedia. Silakan gunakan ketikan teks.');
+      } else if (event.error === 'not-allowed') {
+        toast.error('Akses mikrofon ditolak.');
+      } else {
+        toast.error('Gagal mengenali suara.');
+      }
     };
 
     recognition.onend = () => setIsListening(false);
@@ -107,7 +113,7 @@ export default function AIChatbot() {
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-sm">Duitku AI</h3>
+                <h3 className="font-bold text-sm">CelenganQu</h3>
                 <p className="text-[10px] text-indigo-100 flex items-center">
                   <span className="w-1.5 h-1.5 bg-green-400 rounded-full mr-1 animate-pulse"></span>
                   Online
@@ -123,11 +129,10 @@ export default function AIChatbot() {
           <div className="flex-1 h-80 p-4 overflow-y-auto bg-slate-50 dark:bg-slate-950 space-y-4">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${
-                  msg.role === 'user' 
-                    ? 'bg-indigo-600 text-white rounded-tr-sm' 
+                <div className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.role === 'user'
+                    ? 'bg-indigo-600 text-white rounded-tr-sm'
                     : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-100 dark:border-slate-700 rounded-tl-sm'
-                }`}>
+                  }`}>
                   {msg.text}
                 </div>
               </div>
@@ -146,11 +151,10 @@ export default function AIChatbot() {
 
           {/* Input Area */}
           <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex items-center space-x-2">
-            <button 
+            <button
               onClick={toggleListen}
-              className={`p-2.5 rounded-full transition-colors ${
-                isListening ? 'bg-rose-500 text-white animate-pulse shadow-lg shadow-rose-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-indigo-600'
-              }`}
+              className={`p-2.5 rounded-full transition-colors ${isListening ? 'bg-rose-500 text-white animate-pulse shadow-lg shadow-rose-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-indigo-600'
+                }`}
             >
               <Mic className="w-4 h-4" />
             </button>
