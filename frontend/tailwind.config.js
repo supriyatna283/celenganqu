@@ -9,9 +9,9 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#789b66',
-          light: '#e4eae1',
-          dark: '#546e47',
+          DEFAULT: '#2BBF4B',
+          light: '#7EDC3A',
+          dark: '#006C35',
         },
         dark: {
           DEFAULT: '#1A1A2E', // DARK
@@ -25,6 +25,9 @@ export default {
           DEFAULT: '#C0392B', // RED
           light: '#FDECEA',
         },
+      },
+      backgroundImage: {
+        'gradient-primary': 'linear-gradient(180deg, #7EDC3A 0%, #2BBF4B 35%, #0E9A43 65%, #006C35 100%)',
       },
     },
   },

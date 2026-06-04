@@ -12,7 +12,7 @@ export default defineConfig({
         name: 'CelenganQu',
         short_name: 'CelenganQu',
         description: 'Aplikasi pencatatan keuangan modern dan pintar.',
-        theme_color: '#789b66',
+        theme_color: '#2BBF4B',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',

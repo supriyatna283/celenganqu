@@ -119,7 +119,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-primary to-primary-dark text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center space-x-2 transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
+            className="w-full bg-gradient-primary hover:brightness-110 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center space-x-2 transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />

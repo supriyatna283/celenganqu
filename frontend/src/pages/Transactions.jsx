@@ -435,7 +435,7 @@ export default function Transactions() {
                 </button>
                 <button
                   onClick={openAddModal}
-                  className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
+                  className="bg-gradient-primary hover:brightness-110 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Tambah Transaksi</span>

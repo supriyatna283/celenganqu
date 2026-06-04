@@ -28,7 +28,7 @@ export default function Accounts() {
   const [name, setName] = useState('');
   const [type, setType] = useState('savings');
   const [balance, setBalance] = useState('');
-  const [color, setColor] = useState('#789B66');
+  const [color, setColor] = useState('#2BBF4B');
 
   // Share Form Fields
   const [shareEmail, setShareEmail] = useState('');
@@ -46,7 +46,7 @@ export default function Accounts() {
     setName('');
     setType('savings');
     setBalance('');
-    setColor('#789B66');
+    setColor('#2BBF4B');
     setError('');
     setModalOpen(true);
   };
@@ -56,7 +56,7 @@ export default function Accounts() {
     setName(acc.name);
     setType(acc.type);
     setBalance(parseFloat(acc.balance));
-    setColor(acc.color || '#789B66');
+    setColor(acc.color || '#2BBF4B');
     setError('');
     setModalOpen(true);
   };
@@ -159,7 +159,7 @@ export default function Accounts() {
     return found ? found.label : value;
   };
 
-  const colors = ['#789B66', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
+  const colors = ['#2BBF4B', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
 
   const getAccountIcon = (type, color) => {
     const props = { className: "w-5 h-5", style: { color } };
@@ -190,7 +190,7 @@ export default function Accounts() {
           </div>
           <button
             onClick={openAddModal}
-            className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
+            className="bg-gradient-primary hover:brightness-110 text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
           >
             <Plus className="w-4 h-4" />
             <span>Tambah Akun</span>
@@ -398,7 +398,7 @@ export default function Accounts() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-primary hover:brightness-110 text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>

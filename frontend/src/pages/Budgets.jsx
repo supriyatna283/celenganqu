@@ -140,7 +140,7 @@ export default function Budgets() {
           </div>
           <button
             onClick={openAddModal}
-            className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
+            className="bg-gradient-primary hover:brightness-110 text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
           >
             <Plus className="w-4 h-4" />
             <span>Buat Anggaran</span>
@@ -171,7 +171,7 @@ export default function Budgets() {
                 </button>
                 <button
                   onClick={openAddModal}
-                  className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl text-sm font-semibold flex items-center justify-center space-x-2 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95"
+                  className="bg-gradient-primary hover:brightness-110 text-white px-6 py-3 rounded-xl text-sm font-semibold flex items-center justify-center space-x-2 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Buat Anggaran Pertama</span>
@@ -320,7 +320,7 @@ export default function Budgets() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-primary hover:brightness-110 text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>

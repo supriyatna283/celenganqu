@@ -32,7 +32,7 @@ export default function Goals() {
   const [name, setName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
   const [targetDate, setTargetDate] = useState('');
-  const [color, setColor] = useState('#789B66');
+  const [color, setColor] = useState('#2BBF4B');
 
   // Deposit Form Fields
   const [sourceAccountId, setSourceAccountId] = useState('');
@@ -58,7 +58,7 @@ export default function Goals() {
     setName('');
     setTargetAmount('');
     setTargetDate('');
-    setColor('#789B66');
+    setColor('#2BBF4B');
     setError('');
     setModalOpen(true);
   };
@@ -68,7 +68,7 @@ export default function Goals() {
     setName(g.name);
     setTargetAmount(Math.floor(parseFloat(g.target_amount)).toString());
     setTargetDate(g.target_date || '');
-    setColor(g.color || '#789B66');
+    setColor(g.color || '#2BBF4B');
     setError('');
     setModalOpen(true);
   };
@@ -192,7 +192,7 @@ export default function Goals() {
     }).format(value);
   };
 
-  const colors = ['#789B66', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
+  const colors = ['#2BBF4B', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
 
   return (
     <Layout>
@@ -207,7 +207,7 @@ export default function Goals() {
           </div>
           <button
             onClick={openAddModal}
-            className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
+            className="bg-gradient-primary hover:brightness-110 text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
           >
             <Plus className="w-4 h-4" />
             <span>Target Baru</span>
@@ -291,7 +291,7 @@ export default function Goals() {
                           className="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
                           style={{
                             width: `${percent}%`,
-                            backgroundColor: g.color || '#789B66'
+                            backgroundColor: g.color || '#2BBF4B'
                           }}
                         >
                           <div className="absolute inset-0 bg-white/20 dark:bg-white/10" style={{ backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)', transform: 'skewX(-20deg)' }}></div>
@@ -313,7 +313,7 @@ export default function Goals() {
                       <button
                         onClick={() => openDepositModal(g)}
                         className="w-full text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all duration-300 hover:brightness-110 shadow-lg hover:shadow-xl active:scale-[0.98]"
-                        style={{ backgroundColor: g.color || '#789B66', boxShadow: `0 10px 15px -3px ${g.color}30, 0 4px 6px -4px ${g.color}20` }}
+                        style={{ backgroundColor: g.color || '#2BBF4B', boxShadow: `0 10px 15px -3px ${g.color}30, 0 4px 6px -4px ${g.color}20` }}
                       >
                         <ArrowUpRight className="w-4 h-4 text-white/80" />
                         <span>Tabung Dana</span>
@@ -402,7 +402,7 @@ export default function Goals() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/20 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2 transition-all hover:brightness-110"
                 >
                   {submitting ? (
                     <>
@@ -468,7 +468,7 @@ export default function Goals() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-primary text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/20 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2 transition-all hover:brightness-110"
                 >
                   {submitting ? (
                     <>

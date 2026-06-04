@@ -94,7 +94,7 @@ export default function Dashboard() {
     value: categoryTotals[cat]
   }));
 
-  const DONUT_COLORS = ['#789B66', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085', '#7F8C8D'];
+  const DONUT_COLORS = ['#2BBF4B', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085', '#7F8C8D'];
 
   // 1.5 Data Perbandingan Kategori (Bulan Ini vs Bulan Lalu)
   const categoryTotalsLastMonth = {};
@@ -166,7 +166,7 @@ export default function Dashboard() {
           <div className="flex items-center space-x-3">
             <Link
               to="/transactions"
-              className="bg-primary hover:bg-primary-dark text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
+              className="bg-gradient-primary hover:brightness-110 text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Transaksi</span>
