@@ -106,20 +106,20 @@ const DonationModal = ({ isOpen, onClose }) => {
               ))}
               
               <div className="col-span-2 relative mt-1">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-opacity duration-200">
+                  {customAmount && <span className="font-bold text-sm text-slate-900 dark:text-white">Rp</span>}
+                </div>
                 <input
                   type="text"
                   placeholder="Nominal Lainnya..."
                   value={customAmount ? formatRupiah(customAmount).replace('Rp', '').trim() : ''}
                   onChange={handleCustomAmountChange}
-                  className={`w-full py-3 px-4 rounded-2xl border-2 font-bold text-sm transition-all duration-200 outline-none ${
+                  className={`w-full py-3 rounded-2xl border-2 font-bold text-sm transition-all duration-200 outline-none ${
                     customAmount
-                      ? 'border-primary bg-primary/5 text-slate-900 dark:text-white dark:bg-primary/10'
-                      : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder:text-slate-400 font-normal focus:border-primary/50'
+                      ? 'pl-11 pr-4 border-primary bg-primary/5 text-slate-900 dark:text-white dark:bg-primary/10'
+                      : 'px-4 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder:text-slate-400 font-normal focus:border-primary/50'
                   }`}
                 />
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  {customAmount && <span className="font-bold text-sm text-slate-900 dark:text-white mr-1">Rp</span>}
-                </div>
               </div>
             </div>
           </div>
