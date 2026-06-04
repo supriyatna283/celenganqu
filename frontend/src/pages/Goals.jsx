@@ -239,74 +239,83 @@ export default function Goals() {
               return (
                 <div
                   key={g.id}
-                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-all duration-300"
+                  className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between group hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-none"
                 >
-                  {/* Goal Accent Color Top */}
-                  <div className="absolute top-0 inset-x-0 h-1.5" style={{ backgroundColor: g.color }} />
+                  {/* Modern Glow Top Edge */}
+                  <div className="absolute top-0 inset-x-0 h-1 opacity-80" style={{ backgroundImage: `linear-gradient(to right, ${g.color}, transparent)` }} />
 
                   <div>
                     <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-[180px]">{g.name}</h3>
-                        {g.target_date && (
-                          <span className="text-[10px] text-slate-500 flex items-center space-x-1 mt-1">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>Target: {g.target_date}</span>
-                          </span>
-                        )}
+                      <div className="flex items-center space-x-3">
+                        {/* Icon Circle */}
+                        <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-opacity-10 shrink-0" style={{ backgroundColor: `${g.color}20` }}>
+                          <Target className="w-5 h-5" style={{ color: g.color }} />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 truncate max-w-[150px]">{g.name}</h3>
+                          {g.target_date && (
+                            <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block flex items-center space-x-1 mt-0.5">
+                              <Calendar className="w-3 h-3" />
+                              <span>Target: {g.target_date}</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => openEditModal(g)}
-                          className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-slate-800 dark:hover:text-white bg-slate-100 dark:bg-slate-800/40 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 rounded-lg hover:bg-slate-800 transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
                           title="Edit"
                         >
-                          <Edit3 className="w-4 h-4" />
+                          <Edit3 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(g.id)}
-                          className="p-2 text-slate-400 hover:text-red-400 bg-slate-800/40 rounded-lg hover:bg-red-500/10 transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                           title="Hapus"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
 
                     {/* Progress */}
                     <div className="mt-8 space-y-2">
-                      <div className="flex justify-between text-xs font-semibold text-slate-400">
+                      <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         <span>Terkumpul ({percent}%)</span>
                         <span>Target: {formatIDR(target)}</span>
                       </div>
-                      <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden">
+                      <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden shadow-inner">
                         <div
-                          className="h-full rounded-full transition-all duration-500"
+                          className="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
                           style={{
                             width: `${percent}%`,
                             backgroundColor: g.color || '#1A56A0'
                           }}
-                        />
+                        >
+                          <div className="absolute inset-0 bg-white/20 dark:bg-white/10" style={{ backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)', transform: 'skewX(-20deg)' }}></div>
+                        </div>
                       </div>
-                      <span className="text-xl font-bold text-slate-900 dark:text-white block mt-2">
+                      <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 mt-2 block tracking-tight">
                         {formatIDR(current)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-slate-800/50">
+                  <div className="mt-8 pt-5 border-t border-slate-100 dark:border-slate-800/50">
                     {g.is_completed ? (
-                      <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center py-2.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5">
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-center py-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 shadow-sm">
                         <Target className="w-4 h-4" />
-                        <span>Target Tercapai!</span>
+                        <span>Target Telah Tercapai! 🎉</span>
                       </div>
                     ) : (
                       <button
                         onClick={() => openDepositModal(g)}
-                        className="w-full bg-slate-800 hover:bg-slate-750 text-white py-2.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors duration-200"
+                        className="w-full text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all duration-300 hover:brightness-110 shadow-lg hover:shadow-xl active:scale-[0.98]"
+                        style={{ backgroundColor: g.color || '#1A56A0', boxShadow: `0 10px 15px -3px ${g.color}30, 0 4px 6px -4px ${g.color}20` }}
                       >
-                        <ArrowUpRight className="w-4 h-4 text-primary-light" />
+                        <ArrowUpRight className="w-4 h-4 text-white/80" />
                         <span>Tabung Dana</span>
                       </button>
                     )}
