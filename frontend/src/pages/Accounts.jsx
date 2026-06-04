@@ -429,8 +429,8 @@ export default function Accounts() {
                 <div className="w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-indigo-400" />
                 </div>
-                <h2 className="text-2xl font-bold font-outfit text-white">Bagikan Akun</h2>
-                <p className="text-slate-400 text-sm mt-1">Undang pasangan atau partner bisnis untuk mencatat bersama di akun ini.</p>
+                <h2 className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">Bagikan Akun</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Undang pasangan atau partner bisnis untuk mencatat bersama di akun ini.</p>
               </div>
 
               {error && (
@@ -441,23 +441,23 @@ export default function Accounts() {
 
               <form onSubmit={handleShare} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Email Pengguna CelenganQu</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Email Pengguna CelenganQu</label>
                   <input
                     type="email"
                     placeholder="misal: istri@email.com"
                     value={shareEmail}
                     onChange={(e) => setShareEmail(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Hak Akses</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Hak Akses</label>
                   <select
                     value={shareRole}
                     onChange={(e) => setShareRole(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500"
                   >
                     <option value="editor">Editor (Bisa mencatat transaksi)</option>
                     <option value="viewer">Viewer (Hanya bisa melihat)</option>
