@@ -54,7 +54,8 @@ export default function Login() {
         
         {/* Logo/Header */}
         <div className="flex flex-col items-center mb-8">
-          <h2 className="text-4xl font-black font-outfit text-slate-900 dark:text-white tracking-tight font-outfit">
+          <img src="/pwa-512x512.png" alt="CelenganQu Logo" className="w-20 h-20 drop-shadow-2xl mb-4" />
+          <h2 className="text-4xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">
             Celengan<span className="text-primary-light font-medium">Qu</span>
           </h2>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium text-center">

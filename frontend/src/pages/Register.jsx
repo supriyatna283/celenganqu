@@ -68,6 +68,7 @@ export default function Register() {
         
         {/* Logo/Header */}
         <div className="flex flex-col items-center mb-6">
+          <img src="/pwa-512x512.png" alt="CelenganQu Logo" className="w-16 h-16 drop-shadow-2xl mb-3" />
           <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-outfit">
             Celengan<span className="text-primary-light font-medium">Qu</span>
           </h2>
