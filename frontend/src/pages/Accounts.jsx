@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFinanceStore } from '../store/financeStore';
 import Layout from '../components/Layout';
-import { Plus, Trash2, Edit3, X, CreditCard, Sparkles, Loader2, UserPlus, Users } from 'lucide-react';
+import { Plus, Trash2, Edit3, X, CreditCard, Sparkles, Loader2, UserPlus, Users, Wallet, Landmark, PiggyBank, TrendingUp, Briefcase, Smartphone, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { SkeletonCard } from '../components/Skeleton';
 import { useConfirmStore } from '../store/confirmStore';
@@ -161,6 +161,21 @@ export default function Accounts() {
 
   const colors = ['#1A56A0', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
 
+  const getAccountIcon = (type, color) => {
+    const props = { className: "w-5 h-5", style: { color } };
+    switch(type) {
+      case 'savings': return <Landmark {...props} />;
+      case 'wallet': return <Wallet {...props} />;
+      case 'emoney': return <Smartphone {...props} />;
+      case 'credit': return <CreditCard {...props} />;
+      case 'loan': return <CreditCard {...props} />;
+      case 'investment': return <TrendingUp {...props} />;
+      case 'business': return <Briefcase {...props} />;
+      case 'goal': return <Lock {...props} />;
+      default: return <Wallet {...props} />;
+    }
+  };
+
   const standardAccounts = accounts.filter(a => a.type !== 'goal');
   const goalAccounts = accounts.filter(a => a.type === 'goal');
 
@@ -202,56 +217,61 @@ export default function Accounts() {
             standardAccounts.map(acc => (
               <div
                 key={acc.id}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all duration-300"
+                className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800 rounded-3xl p-6 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-none"
               >
-                {/* Accent top line */}
-                <div className="absolute top-0 inset-x-0 h-1.5" style={{ backgroundColor: acc.color }} />
+                {/* Modern Glow Top Edge */}
+                <div className="absolute top-0 inset-x-0 h-1 opacity-80" style={{ backgroundImage: `linear-gradient(to right, ${acc.color}, transparent)` }} />
 
                 <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-xs font-semibold text-slate-400 capitalize block flex items-center space-x-1">
-                      <span>{getAccountTypeLabel(acc.type)}</span>
-                      {acc.is_shared && (
-                        <>
-                          <span>•</span>
-                          <Users className="w-3 h-3 text-indigo-400" />
-                          <span className="text-indigo-400">Shared by {acc.owner?.name}</span>
-                        </>
-                      )}
-                    </span>
-                    <h3 className="text-xl font-bold mt-1 text-slate-900 dark:text-white truncate max-w-[180px]">{acc.name}</h3>
+                  <div className="flex items-center space-x-3">
+                    {/* Icon Circle */}
+                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-opacity-10 shrink-0" style={{ backgroundColor: `${acc.color}20` }}>
+                      {getAccountIcon(acc.type, acc.color)}
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block flex items-center space-x-1">
+                        <span>{getAccountTypeLabel(acc.type)}</span>
+                        {acc.is_shared && (
+                          <>
+                            <span>•</span>
+                            <Users className="w-3 h-3 text-indigo-400" />
+                          </>
+                        )}
+                      </span>
+                      <h3 className="text-lg font-bold mt-0.5 text-slate-800 dark:text-slate-100 truncate max-w-[150px]">{acc.name}</h3>
+                    </div>
                   </div>
 
                   {!acc.is_shared && (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => openShareModal(acc.id)}
-                        className="p-2 text-indigo-500 dark:text-indigo-400 hover:text-white bg-indigo-50 dark:bg-indigo-500/10 rounded-lg hover:bg-indigo-500 dark:hover:bg-indigo-500/30 transition-colors"
+                        className="p-1.5 text-indigo-500 dark:text-indigo-400 hover:text-white bg-indigo-50 dark:bg-indigo-500/10 rounded-lg hover:bg-indigo-500 transition-colors"
                         title="Bagikan Akun"
                       >
-                        <UserPlus className="w-4 h-4" />
+                        <UserPlus className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => openEditModal(acc)}
-                        className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
                         title="Edit Akun"
                       >
-                        <Edit3 className="w-4 h-4" />
+                        <Edit3 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDelete(acc.id)}
-                        className="p-2 text-slate-400 hover:text-red-500 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800/40 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
                         title="Hapus Akun"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   )}
                 </div>
 
                 <div className="mt-8">
-                  <span className="text-xs text-slate-500 block uppercase font-semibold">Saldo Saat Ini</span>
-                  <span className="text-2xl font-black text-slate-900 dark:text-white mt-1 block tracking-tight">
+                  <span className="text-[10px] text-slate-500 block uppercase font-bold tracking-wider">Saldo Saat Ini</span>
+                  <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 mt-1 block tracking-tight">
                     {formatIDR(acc.balance)}
                   </span>
                 </div>
@@ -271,21 +291,26 @@ export default function Accounts() {
               {goalAccounts.map(acc => (
                 <div
                   key={acc.id}
-                  className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all duration-300 opacity-90"
+                  className="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-100/50 dark:border-indigo-800/50 rounded-3xl p-6 relative overflow-hidden group hover:border-indigo-300 dark:hover:border-indigo-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-100/50 dark:hover:shadow-none"
                 >
-                  <div className="absolute top-0 inset-x-0 h-1.5" style={{ backgroundColor: acc.color }} />
+                  <div className="absolute top-0 inset-x-0 h-1 opacity-80" style={{ backgroundImage: `linear-gradient(to right, ${acc.color}, transparent)` }} />
                   <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-xs font-semibold text-slate-400 capitalize block flex items-center space-x-1">
-                        <span>Kantong Virtual Terkunci</span>
-                      </span>
-                      <h3 className="text-lg font-bold mt-1 text-slate-900 dark:text-white truncate max-w-[200px]">{acc.name}</h3>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-indigo-500/10 shrink-0">
+                        <Lock className="w-5 h-5 text-indigo-500" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-indigo-400/80 uppercase tracking-wider block flex items-center space-x-1">
+                          <span>Kantong Terkunci</span>
+                        </span>
+                        <h3 className="text-lg font-bold mt-0.5 text-indigo-950 dark:text-indigo-100 truncate max-w-[180px]">{acc.name}</h3>
+                      </div>
                     </div>
                     {/* No edit/delete buttons for goal accounts, they are managed via Goals page */}
                   </div>
-                  <div className="mt-6">
-                    <span className="text-xs text-slate-500 block uppercase font-semibold">Saldo Tersimpan</span>
-                    <span className="text-2xl font-black text-slate-900 dark:text-white mt-1 block tracking-tight">
+                  <div className="mt-8">
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold tracking-wider">Saldo Tersimpan</span>
+                    <span className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-br from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mt-1 block tracking-tight">
                       {formatIDR(acc.balance)}
                     </span>
                   </div>
