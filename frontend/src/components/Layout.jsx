@@ -20,12 +20,14 @@ import {
   Bot,
   Plus,
   Eye,
-  EyeOff
+  EyeOff,
+  Gift
 } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import AIChatbot from './AIChatbot';
 import ConfirmModal from './ConfirmModal';
 import OnboardingTour from './OnboardingTour';
+import DonationModal from './DonationModal';
 
 export default function Layout({ children }) {
   const { user, logout, isAuthenticated, initializeAuth } = useAuthStore();
@@ -33,6 +35,7 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDonationModalOpen, setDonationModalOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
@@ -110,6 +113,14 @@ export default function Layout({ children }) {
 
         {/* Bottom Panel (Theme Toggle, User Info, Logout) */}
         <div className="border-t border-slate-200 dark:border-slate-800 pt-6 mt-6 flex flex-col space-y-4">
+          <button
+            onClick={() => setDonationModalOpen(true)}
+            className="flex items-center justify-center space-x-2 px-4 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:-translate-y-0.5"
+          >
+            <Gift className="w-5 h-5" />
+            <span>Dukung CelenganQu</span>
+          </button>
+          
           {/* Controls: Theme & Hide Nominal */}
           <div className="flex items-center gap-2">
             <button
@@ -223,6 +234,16 @@ export default function Layout({ children }) {
               </nav>
               <button
                 onClick={() => {
+                  setMobileMenuOpen(false);
+                  setDonationModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20 mb-3"
+              >
+                <Gift className="w-5 h-5" />
+                <span>Dukung CelenganQu</span>
+              </button>
+              <button
+                onClick={() => {
                   logout();
                   navigate('/login');
                 }}
@@ -285,6 +306,7 @@ export default function Layout({ children }) {
       <OnboardingTour />
       <AIChatbot />
       <ConfirmModal />
+      <DonationModal isOpen={isDonationModalOpen} onClose={() => setDonationModalOpen(false)} />
     </div>
   );
 }
