@@ -475,7 +475,7 @@ export default function DebtLoans() {
                 <button
                   type="submit"
                   disabled={paying}
-                  className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2 bg-gradient-primary hover:brightness-110 text-white rounded-xl font-medium transition disabled:opacity-50"
                 >
                   {paying ? 'Memproses...' : 'Catat Bayar'}
                 </button>

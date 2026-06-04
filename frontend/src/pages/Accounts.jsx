@@ -291,7 +291,7 @@ export default function Accounts() {
               {goalAccounts.map(acc => (
                 <div
                   key={acc.id}
-                  className="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-100/50 dark:border-indigo-800/50 rounded-3xl p-6 relative overflow-hidden group hover:border-indigo-300 dark:hover:border-indigo-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-100/50 dark:hover:shadow-none"
+                  className="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-100/50 dark:border-indigo-800/50 rounded-3xl p-6 relative overflow-hidden group hover:border-indigo-300 dark:hover:border-indigo-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20/50 dark:hover:shadow-none"
                 >
                   <div className="absolute top-0 inset-x-0 h-1 opacity-80" style={{ backgroundImage: `linear-gradient(to right, ${acc.color}, transparent)` }} />
                   <div className="flex items-start justify-between">
@@ -467,7 +467,7 @@ export default function Accounts() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg flex items-center justify-center mt-6 disabled:opacity-50 space-x-2 transition-all"
+                  className="w-full bg-gradient-primary hover:brightness-110 text-white py-3 rounded-xl font-semibold shadow-lg flex items-center justify-center mt-6 disabled:opacity-50 space-x-2 transition-all"
                 >
                   {submitting ? (
                     <>

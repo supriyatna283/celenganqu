@@ -94,7 +94,7 @@ export default function Settings() {
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-100 dark:shadow-none transition duration-200 font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-primary hover:brightness-110 text-white rounded-xl shadow-md shadow-primary/20 dark:shadow-none transition duration-200 font-medium"
           >
             <Plus size={18} />
             Kategori Baru
@@ -293,7 +293,7 @@ export default function Settings() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2 bg-gradient-primary hover:brightness-110 text-white rounded-xl font-medium transition disabled:opacity-50"
                 >
                   {submitting ? 'Menyimpan...' : 'Simpan Kategori'}
                 </button>

@@ -30,7 +30,7 @@ export default function EmptyState({
         buttonText && onAction && (
           <button
             onClick={onAction}
-            className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95"
+            className="bg-gradient-primary hover:brightness-110 text-white px-6 py-3 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>{buttonText}</span>

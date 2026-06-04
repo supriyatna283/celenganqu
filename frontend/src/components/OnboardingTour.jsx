@@ -142,7 +142,7 @@ export default function OnboardingTour() {
             {/* Next Button */}
             <button
               onClick={nextSlide}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-95"
+              className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-primary hover:brightness-110 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-95"
             >
               <span>{currentSlide === slides.length - 1 ? 'Mulai Sekarang' : 'Lanjut'}</span>
               {currentSlide === slides.length - 1 ? (

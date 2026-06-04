@@ -75,7 +75,7 @@ export default function Subscriptions() {
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">Langganan & Tagihan</h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Pantau tagihan tetap Anda. Sistem akan memotong otomatis pada tanggal jatuh tempo.</p>
           </div>
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center space-x-2 shadow-lg shadow-indigo-500/20 transition-all duration-200">
+          <button className="bg-gradient-primary hover:brightness-110 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200">
             <Plus className="w-4 h-4" />
             <span>Tambah Tagihan</span>
           </button>
@@ -83,7 +83,7 @@ export default function Subscriptions() {
 
         {/* Dashboard Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg shadow-indigo-500/20 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg shadow-primary/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">

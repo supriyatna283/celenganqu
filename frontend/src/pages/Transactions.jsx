@@ -444,7 +444,7 @@ export default function Transactions() {
             ) : (
               <button
                 onClick={openAddRecurringModal}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-indigo-500/20 transition-all duration-200"
+                className="bg-gradient-primary hover:brightness-110 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 shadow-lg shadow-primary/20 transition-all duration-200"
               >
                 <Clock className="w-4 h-4" />
                 <span>Buat Rencana Rutin</span>
@@ -661,7 +661,7 @@ export default function Transactions() {
                           <div className="hidden md:flex items-center space-x-2">
                             <button
                               onClick={() => openEditModal(tx)}
-                              className="p-2.5 text-slate-400 hover:text-white bg-slate-100 dark:bg-slate-800/50 rounded-xl hover:bg-indigo-500 dark:hover:bg-indigo-500 transition-all pointer-events-auto shadow-sm hover:shadow-indigo-500/20"
+                              className="p-2.5 text-slate-400 hover:text-white bg-slate-100 dark:bg-slate-800/50 rounded-xl hover:bg-indigo-500 dark:hover:bg-indigo-500 transition-all pointer-events-auto shadow-sm hover:shadow-primary/20"
                               title="Edit"
                             >
                               <Edit3 className="w-4 h-4" />
@@ -842,7 +842,7 @@ export default function Transactions() {
                         <Camera className="w-3.5 h-3.5" />
                         <span className="hidden sm:inline">Kamera</span>
                       </button>
-                      <label className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-750 text-white text-xs font-bold rounded-lg cursor-pointer transition disabled:opacity-50 shadow-md shadow-indigo-600/20">
+                      <label className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-primary hover:brightness-110 text-white text-xs font-bold rounded-lg cursor-pointer transition disabled:opacity-50 shadow-md shadow-indigo-600/20">
                         {loadingScan ? (
                           <>
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -979,7 +979,7 @@ export default function Transactions() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg shadow-indigo-500/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-primary hover:brightness-110 text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/20 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>
@@ -1040,7 +1040,7 @@ export default function Transactions() {
                 <button
                   type="submit"
                   disabled={submitting || !importFile}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold shadow-lg shadow-indigo-500/10 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
+                  className="w-full bg-gradient-primary hover:brightness-110 text-white py-3 rounded-xl font-semibold shadow-lg shadow-primary/20 flex items-center justify-center mt-6 disabled:opacity-50 space-x-2"
                 >
                   {submitting ? (
                     <>
