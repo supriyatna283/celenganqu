@@ -20,7 +20,8 @@ import {
   Upload,
   Paperclip,
   FileText,
-  Search
+  Search,
+  User
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -58,6 +59,8 @@ export default function Transactions() {
     importCSV,
     hideNominal
   } = useFinanceStore();
+
+  const sharedAccountIds = accounts.filter(a => a.is_shared).map(a => a.id);
 
   const [activeTab, setActiveTab] = useState('history'); // 'history' or 'recurring'
   const [searchQuery, setSearchQuery] = useState('');
@@ -629,9 +632,17 @@ export default function Transactions() {
                                 </>
                               )}
                               {tx.type !== 'transfer' && (
-                                <span className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
-                                  {tx.account?.name}
-                                </span>
+                                <div className="flex items-center space-x-1">
+                                  <span className="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg">
+                                    {tx.account?.name}
+                                  </span>
+                                  {sharedAccountIds.includes(tx.account_id) && tx.user && (
+                                    <span className="flex items-center space-x-1 text-[9px] text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-1.5 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-800/30">
+                                      <User className="w-2.5 h-2.5" />
+                                      <span>Oleh {tx.user.name.split(' ')[0]}</span>
+                                    </span>
+                                  )}
+                                </div>
                               )}
                             </div>
                             <span className="text-xs text-slate-500 mt-1 block max-w-sm truncate">{tx.description || '-'}</span>

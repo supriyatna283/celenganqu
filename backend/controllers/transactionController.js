@@ -3,6 +3,7 @@ const Account = require('../models/Account');
 const Budget = require('../models/Budget');
 const Notification = require('../models/Notification');
 const SharedAccount = require('../models/SharedAccount');
+const User = require('../models/User');
 const { Op } = require('sequelize');
 const sequelize = require('../config/database');
 const { processRecurringTransactions } = require('../utils/recurringProcessor');
@@ -139,7 +140,8 @@ exports.getTransactions = async (req, res) => {
       where: whereClause,
       include: [
         { model: Account, as: 'account', attributes: ['id', 'name', 'type', 'color'] },
-        { model: Account, as: 'destination_account', attributes: ['id', 'name', 'type', 'color'] }
+        { model: Account, as: 'destination_account', attributes: ['id', 'name', 'type', 'color'] },
+        { model: User, as: 'user', attributes: ['id', 'name', 'email'] }
       ],
       order: [['transaction_date', 'DESC'], ['created_at', 'DESC']]
     });

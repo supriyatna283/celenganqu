@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFinanceStore } from '../store/financeStore';
 import Layout from '../components/Layout';
-import { ArrowUpRight, ArrowDownRight, Wallet, Plus, ArrowLeftRight, Sparkles, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet, Plus, ArrowLeftRight, Sparkles, AlertCircle, Info, CheckCircle2, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip as ChartTooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Skeleton, SkeletonList } from '../components/Skeleton';
@@ -20,6 +20,8 @@ export default function Dashboard() {
     hideNominal
   } = useFinanceStore();
 
+  const [includeSharedAccounts, setIncludeSharedAccounts] = useState(true);
+
   useEffect(() => {
     fetchAccounts();
     fetchTransactions();
@@ -36,14 +38,19 @@ export default function Dashboard() {
     }).format(value);
   };
 
+  // Filter accounts and transactions based on includeSharedAccounts
+  const sharedAccountIds = accounts.filter(a => a.is_shared).map(a => a.id);
+  const filteredAccounts = includeSharedAccounts ? accounts : accounts.filter(acc => !acc.is_shared);
+  const filteredTransactions = includeSharedAccounts ? transactions : transactions.filter(tx => !sharedAccountIds.includes(tx.account_id));
+
   // Calculations
-  const totalBalance = accounts.reduce((acc, curr) => acc + parseFloat(curr.balance), 0);
+  const totalBalance = filteredAccounts.reduce((acc, curr) => acc + parseFloat(curr.balance), 0);
   
   // Calculate total income and expenses for the current month
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   
-  const currentMonthTransactions = transactions.filter(tx => {
+  const currentMonthTransactions = filteredTransactions.filter(tx => {
     const txDate = new Date(tx.transaction_date);
     return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
   });
@@ -60,7 +67,7 @@ export default function Dashboard() {
   const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
   const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
   
-  const lastMonthTransactions = transactions.filter(tx => {
+  const lastMonthTransactions = filteredTransactions.filter(tx => {
     const txDate = new Date(tx.transaction_date);
     return txDate.getMonth() === lastMonth && txDate.getFullYear() === lastMonthYear;
   });
@@ -81,7 +88,7 @@ export default function Dashboard() {
   const incomeChange = getPercentageChange(totalIncome, lastMonthIncome);
   const expenseChange = getPercentageChange(totalExpense, lastMonthExpense);
 
-  const recentTransactions = transactions.slice(0, 5);
+  const recentTransactions = filteredTransactions.slice(0, 5);
 
   // 1. Data Donut Chart (Distribusi Pengeluaran)
   const categoryTotals = {};
@@ -134,7 +141,7 @@ export default function Dashboard() {
       const mIndex = d.getMonth();
       const y = d.getFullYear();
       
-      const mTransactions = transactions.filter(tx => {
+      const mTransactions = filteredTransactions.filter(tx => {
         const tDate = new Date(tx.transaction_date);
         return tDate.getMonth() === mIndex && tDate.getFullYear() === y;
       });
@@ -179,11 +186,26 @@ export default function Dashboard() {
           {/* Total Saldo */}
           <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur border border-slate-150 dark:border-slate-800 p-6 rounded-3xl relative overflow-hidden group hover:border-primary dark:hover:border-primary transition-all duration-300">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-300" />
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 text-primary dark:text-primary-light rounded-xl flex items-center justify-center">
-                <Wallet className="w-5 h-5" />
+            <div className="flex items-center justify-between mb-4 relative z-10">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary/10 text-primary dark:text-primary-light rounded-xl flex items-center justify-center">
+                  <Wallet className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Saldo Aset</span>
               </div>
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Saldo Aset</span>
+              
+              {accounts.some(a => a.is_shared) && (
+                <label className="relative inline-flex items-center cursor-pointer" title="Sertakan Saldo Akun Bersama">
+                  <input 
+                    type="checkbox" 
+                    checked={includeSharedAccounts} 
+                    onChange={() => setIncludeSharedAccounts(!includeSharedAccounts)} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-8 h-4 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary"></div>
+                  <Users className="w-3.5 h-3.5 ml-2 text-slate-400 peer-checked:text-primary transition-colors" />
+                </label>
+              )}
             </div>
             {loadingAccounts ? (
               <Skeleton className="h-8 w-36 mt-1" />

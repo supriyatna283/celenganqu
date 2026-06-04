@@ -231,14 +231,14 @@ export default function Accounts() {
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block flex items-center space-x-1">
                         <span>{getAccountTypeLabel(acc.type)}</span>
-                        {acc.is_shared && (
-                          <>
-                            <span>•</span>
-                            <Users className="w-3 h-3 text-indigo-400" />
-                          </>
-                        )}
                       </span>
                       <h3 className="text-lg font-bold mt-0.5 text-slate-800 dark:text-slate-100 truncate max-w-[150px]">{acc.name}</h3>
+                      {acc.is_shared && acc.owner && (
+                        <div className="mt-1 flex items-center space-x-1 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[9px] px-2 py-1 rounded-lg font-semibold w-max border border-indigo-100 dark:border-indigo-800/40">
+                          <Users className="w-2.5 h-2.5" />
+                          <span>Milik: {acc.owner.name}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
