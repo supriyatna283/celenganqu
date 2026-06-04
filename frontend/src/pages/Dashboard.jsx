@@ -442,7 +442,7 @@ export default function Dashboard() {
                 </div>
               ) : (
                 recentTransactions.map(tx => (
-                  <div key={tx.id} className="bg-slate-50/50 hover:bg-slate-50/80 dark:bg-slate-955/30 dark:hover:bg-slate-950/50 border border-slate-100 dark:border-slate-800/60 p-4 rounded-2xl flex items-center justify-between transition-colors duration-200">
+                  <div key={tx.id} className="bg-slate-50/50 hover:bg-slate-50/80 dark:bg-slate-800/30 dark:hover:bg-slate-800/50 border border-slate-100 dark:border-slate-800/60 p-4 rounded-2xl flex items-center justify-between transition-colors duration-200">
                     <div className="flex items-center space-x-4">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                         tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
