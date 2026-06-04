@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, X, Gift, ShieldCheck, ChevronRight, Copy, Check, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 const DonationModal = ({ isOpen, onClose }) => {
   const [selectedAmount, setSelectedAmount] = useState(25000);
   const [customAmount, setCustomAmount] = useState('');
-  const [showPayment, setShowPayment] = useState(false);
+  const [step, setStep] = useState(1);
   const [copied, setCopied] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setStep(1);
+      setSelectedAmount(25000);
+      setCustomAmount('');
+      setCopied(null);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -37,7 +46,7 @@ const DonationModal = ({ isOpen, onClose }) => {
       return;
     }
     
-    setShowPayment(true);
+    setStep(2);
   };
 
   const handleCopy = (text, type) => {
@@ -47,7 +56,7 @@ const DonationModal = ({ isOpen, onClose }) => {
   };
 
   const handleClose = () => {
-    setShowPayment(false);
+    setStep(1);
     onClose();
   };
 
@@ -83,7 +92,7 @@ const DonationModal = ({ isOpen, onClose }) => {
         </div>
 
         <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-          {!showPayment ? (
+          {step === 1 && (
             <>
               <div className="mb-6">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 uppercase tracking-wider">Pilih Nominal</h3>
@@ -141,11 +150,13 @@ const DonationModal = ({ isOpen, onClose }) => {
             <ChevronRight className="w-5 h-5 opacity-70 group-hover:translate-x-1 transition-transform" />
           </button>
             </>
-          ) : (
+          )}
+          
+          {step === 2 && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="mb-6">
                 <button 
-                  onClick={() => setShowPayment(false)}
+                  onClick={() => setStep(1)}
                   className="flex items-center space-x-2 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors mb-4"
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -198,10 +209,29 @@ const DonationModal = ({ isOpen, onClose }) => {
               </div>
               
               <button
-                onClick={handleClose}
+                onClick={() => setStep(3)}
                 className="w-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold py-3.5 px-6 rounded-2xl transition-all shadow-md mt-2 flex items-center justify-center"
               >
                 Selesai
+              </button>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="animate-in zoom-in-95 fade-in duration-500 py-6 text-center flex flex-col items-center">
+              <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-6 shadow-inner relative">
+                <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
+                <Heart className="w-10 h-10 text-emerald-500 fill-emerald-500 animate-bounce" />
+              </div>
+              <h3 className="text-2xl font-bold font-outfit text-slate-900 dark:text-white mb-3 tracking-tight">Terima Kasih Banyak! 💚</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-8 max-w-[280px]">
+                Dukungan Anda sangat berarti bagi pengembangan CelenganQu. Semoga kebaikan Anda berbalas berlipat ganda!
+              </p>
+              <button
+                onClick={handleClose}
+                className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3.5 px-6 rounded-2xl transition-all"
+              >
+                Tutup Jendela
               </button>
             </div>
           )}
