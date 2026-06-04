@@ -28,7 +28,7 @@ export default function Accounts() {
   const [name, setName] = useState('');
   const [type, setType] = useState('savings');
   const [balance, setBalance] = useState('');
-  const [color, setColor] = useState('#1A56A0');
+  const [color, setColor] = useState('#789B66');
 
   // Share Form Fields
   const [shareEmail, setShareEmail] = useState('');
@@ -46,7 +46,7 @@ export default function Accounts() {
     setName('');
     setType('savings');
     setBalance('');
-    setColor('#1A56A0');
+    setColor('#789B66');
     setError('');
     setModalOpen(true);
   };
@@ -56,7 +56,7 @@ export default function Accounts() {
     setName(acc.name);
     setType(acc.type);
     setBalance(parseFloat(acc.balance));
-    setColor(acc.color || '#1A56A0');
+    setColor(acc.color || '#789B66');
     setError('');
     setModalOpen(true);
   };
@@ -159,7 +159,7 @@ export default function Accounts() {
     return found ? found.label : value;
   };
 
-  const colors = ['#1A56A0', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
+  const colors = ['#789B66', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
 
   const getAccountIcon = (type, color) => {
     const props = { className: "w-5 h-5", style: { color } };

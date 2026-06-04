@@ -94,7 +94,7 @@ export default function Dashboard() {
     value: categoryTotals[cat]
   }));
 
-  const DONUT_COLORS = ['#1A56A0', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085', '#7F8C8D'];
+  const DONUT_COLORS = ['#789B66', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085', '#7F8C8D'];
 
   // 1.5 Data Perbandingan Kategori (Bulan Ini vs Bulan Lalu)
   const categoryTotalsLastMonth = {};

@@ -9,9 +9,9 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#1A56A0', // BLUE from PRD
-          light: '#D6E4F7', // LIGHT_BLUE
-          dark: '#164882',
+          DEFAULT: '#789b66',
+          light: '#e4eae1',
+          dark: '#546e47',
         },
         dark: {
           DEFAULT: '#1A1A2E', // DARK

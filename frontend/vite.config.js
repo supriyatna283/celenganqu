@@ -7,12 +7,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       manifest: {
         name: 'CelenganQu',
         short_name: 'CelenganQu',
         description: 'Aplikasi pencatatan keuangan modern dan pintar.',
-        theme_color: '#4f46e5',
+        theme_color: '#789b66',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
