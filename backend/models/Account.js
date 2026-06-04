@@ -21,7 +21,7 @@ const Account = sequelize.define('Account', {
     allowNull: false
   },
   type: {
-    type: DataTypes.ENUM('savings', 'wallet', 'credit', 'investment'),
+    type: DataTypes.ENUM('savings', 'wallet', 'credit', 'investment', 'emoney', 'loan', 'business'),
     allowNull: false
   },
   balance: {

@@ -147,9 +147,17 @@ export default function Accounts() {
   const accountTypes = [
     { value: 'savings', label: 'Tabungan Bank' },
     { value: 'wallet', label: 'Dompet / Cash' },
+    { value: 'emoney', label: 'e-Wallet (OVO/GoPay)' },
     { value: 'credit', label: 'Kartu Kredit' },
-    { value: 'investment', label: 'Investasi' }
+    { value: 'loan', label: 'Pinjaman / Cicilan' },
+    { value: 'investment', label: 'Investasi' },
+    { value: 'business', label: 'Kas Bisnis / Usaha' }
   ];
+
+  const getAccountTypeLabel = (value) => {
+    const found = accountTypes.find(t => t.value === value);
+    return found ? found.label : value;
+  };
 
   const colors = ['#1A56A0', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
 
@@ -199,7 +207,7 @@ export default function Accounts() {
                 <div className="flex items-start justify-between">
                   <div>
                     <span className="text-xs font-semibold text-slate-400 capitalize block flex items-center space-x-1">
-                      <span>{acc.type}</span>
+                      <span>{getAccountTypeLabel(acc.type)}</span>
                       {acc.is_shared && (
                         <>
                           <span>•</span>
