@@ -16,6 +16,10 @@ const Goal = sequelize.define('Goal', {
       key: 'id'
     }
   },
+  account_id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: true
+  },
   name: {
     type: DataTypes.STRING(100),
     allowNull: false
@@ -50,8 +54,13 @@ const Goal = sequelize.define('Goal', {
   updatedAt: 'updated_at'
 });
 
+const Account = require('./Account');
+
 // Associations
 User.hasMany(Goal, { foreignKey: 'user_id', as: 'goals' });
 Goal.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+Account.hasOne(Goal, { foreignKey: 'account_id', as: 'goal_reference' });
+Goal.belongsTo(Account, { foreignKey: 'account_id', as: 'account' });
 
 module.exports = Goal;

@@ -877,7 +877,7 @@ export default function Transactions() {
                     className={`w-full bg-slate-50 dark:bg-slate-950 border text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none transition-colors ${formErrors.accountId ? 'border-red-500 focus:border-red-500 ring-1 ring-red-500/20' : 'border-slate-250 dark:border-slate-800 focus:border-primary'}`}
                   >
                     {accounts.map(acc => (
-                      <option key={acc.id} value={acc.id}>{acc.name} ({formatIDR(acc.balance)})</option>
+                      <option key={acc.id} value={acc.id}>{acc.type === 'goal' ? '🎯 ' : ''}{acc.name} ({formatIDR(acc.balance)})</option>
                     ))}
                   </select>
                   {formErrors.accountId && <p className="text-[10px] text-red-500 mt-1">{formErrors.accountId}</p>}
@@ -894,7 +894,7 @@ export default function Transactions() {
                     >
                       <option value="">Pilih Akun Tujuan</option>
                       {accounts.map(acc => (
-                        <option key={acc.id} value={acc.id}>{acc.name} ({formatIDR(acc.balance)})</option>
+                        <option key={acc.id} value={acc.id}>{acc.type === 'goal' ? '🎯 ' : ''}{acc.name} ({formatIDR(acc.balance)})</option>
                       ))}
                     </select>
                     {formErrors.destAccountId && <p className="text-[10px] text-red-500 mt-1">{formErrors.destAccountId}</p>}

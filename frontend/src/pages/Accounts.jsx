@@ -161,6 +161,9 @@ export default function Accounts() {
 
   const colors = ['#1A56A0', '#1D6F42', '#C0392B', '#8E44AD', '#D35400', '#2C3E50', '#16A085'];
 
+  const standardAccounts = accounts.filter(a => a.type !== 'goal');
+  const goalAccounts = accounts.filter(a => a.type === 'goal');
+
   return (
     <Layout>
       <div className="space-y-8 select-none">
@@ -179,7 +182,7 @@ export default function Accounts() {
           </button>
         </div>
 
-        {/* Grid of Accounts */}
+        {/* Grid of Standard Accounts */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loadingAccounts ? (
             <>
@@ -187,7 +190,7 @@ export default function Accounts() {
               <SkeletonCard />
               <SkeletonCard />
             </>
-          ) : accounts.length === 0 ? (
+          ) : standardAccounts.length === 0 ? (
             <EmptyState
               icon={CreditCard}
               title="Belum ada akun keuangan"
@@ -196,7 +199,7 @@ export default function Accounts() {
               onAction={openAddModal}
             />
           ) : (
-            accounts.map(acc => (
+            standardAccounts.map(acc => (
               <div
                 key={acc.id}
                 className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all duration-300"
@@ -256,6 +259,41 @@ export default function Accounts() {
             ))
           )}
         </div>
+
+        {/* Grid of Goal Accounts (Virtual Pockets) */}
+        {!loadingAccounts && goalAccounts.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-xl font-bold font-outfit tracking-tight mb-4 flex items-center space-x-2">
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              <span>Kantong Tabungan (Virtual Pockets)</span>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {goalAccounts.map(acc => (
+                <div
+                  key={acc.id}
+                  className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all duration-300 opacity-90"
+                >
+                  <div className="absolute top-0 inset-x-0 h-1.5" style={{ backgroundColor: acc.color }} />
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-xs font-semibold text-slate-400 capitalize block flex items-center space-x-1">
+                        <span>Kantong Virtual Terkunci</span>
+                      </span>
+                      <h3 className="text-lg font-bold mt-1 text-slate-900 dark:text-white truncate max-w-[200px]">{acc.name}</h3>
+                    </div>
+                    {/* No edit/delete buttons for goal accounts, they are managed via Goals page */}
+                  </div>
+                  <div className="mt-6">
+                    <span className="text-xs text-slate-500 block uppercase font-semibold">Saldo Tersimpan</span>
+                    <span className="text-2xl font-black text-slate-900 dark:text-white mt-1 block tracking-tight">
+                      {formatIDR(acc.balance)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {modalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
