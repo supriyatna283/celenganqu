@@ -64,9 +64,8 @@ ${JSON.stringify(categories.map(c => c.name))}
 ${JSON.stringify(budgetContext)}
 
 === ATURAN WAJIB UNTUK "type" ===
-- "expense" (PENGELUARAN): Jika pengguna MEMBELI, BAYAR, BELANJA, KELUAR uang, MAKAN, BELI sesuatu. Contoh: "beli baso", "bayar listrik", "makan siang", "belanja baju". KATA KUNCI: beli, bayar, belanja, makan, jajan, bayar, keluar, habis.
+- "expense" (PENGELUARAN): Jika pengguna MEMBELI, BAYAR, BELANJA, KELUAR uang, MAKAN, BELI sesuatu, ATAU jika pengguna menyebut TRANSFER/KIRIM uang. Contoh: "beli baso", "bayar listrik", "transfer dari BCA". KATA KUNCI: beli, bayar, belanja, transfer, kirim, makan, jajan, keluar, habis. (Semua transfer via AI dicatat sebagai expense).
 - "income" (PEMASUKAN): Jika pengguna MENERIMA, DAPAT, GAJIAN, MASUK uang. Contoh: "terima gaji", "dapat bonus", "pemasukan dari freelance". KATA KUNCI: terima, dapat, masuk, gaji, bonus, pemasukan.
-- "transfer": Jika pengguna MEMINDAHKAN uang antar akun. Contoh: "transfer dari BCA ke Gopay".
 INGAT: Kata "dari" dalam konteks PEMBELIAN (misal "beli baso dari Gopay") berarti sumber pembayaran, BUKAN pemasukan. Itu tetap "expense".
 
 === FORMAT RESPONS JSON ===
@@ -74,7 +73,7 @@ INGAT: Kata "dari" dalam konteks PEMBELIAN (misal "beli baso dari Gopay") berart
   "intent": "log_transaction" | "can_i_afford" | "general_advice",
   "reply": "Pesan balasan santai bahasa Indonesia gaul yang menyebutkan detail spesifik transaksi (nama akun, jumlah, deskripsi)",
   "transaction_data": {
-    "type": "expense" | "income" | "transfer",
+    "type": "expense" | "income",
     "amount": 50000,
     "account_id": <gunakan ID PERSIS dari daftar akun di atas>,
     "category": "<nama kategori PERSIS dari daftar kategori, atau 'Lainnya' jika tidak ada yang cocok>",
@@ -100,6 +99,9 @@ Jika bukan log_transaction, set "transaction_data" ke null.
     if (aiResponse.intent === 'log_transaction' && aiResponse.transaction_data) {
       let { type, amount, account_id, category, description } = aiResponse.transaction_data;
       
+      // Fallback: AI should not output transfer, but if it hallucinates one, treat it as expense
+      if (type === 'transfer') type = 'expense';
+
       console.log("Extracted Data:", { type, amount, account_id, category, description });
 
       // AI seringkali gagal menentukan account_id jika pengguna tidak menyebutkannya.
