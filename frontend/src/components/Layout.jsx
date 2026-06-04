@@ -25,6 +25,7 @@ import {
 import NotificationBell from './NotificationBell';
 import AIChatbot from './AIChatbot';
 import ConfirmModal from './ConfirmModal';
+import OnboardingTour from './OnboardingTour';
 
 export default function Layout({ children }) {
   const { user, logout, isAuthenticated, initializeAuth } = useAuthStore();
@@ -281,6 +282,7 @@ export default function Layout({ children }) {
         </div>
       </nav>
 
+      <OnboardingTour />
       <AIChatbot />
       <ConfirmModal />
     </div>

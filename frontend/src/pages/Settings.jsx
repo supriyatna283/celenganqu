@@ -215,7 +215,7 @@ export default function Settings() {
                       onClick={() => setType('expense')}
                       className={`py-2 px-4 rounded-xl border font-medium transition ${
                         type === 'expense'
-                          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-650 dark:text-indigo-400'
+                          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                           : 'border-slate-200 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900'
                       }`}
                     >
@@ -226,7 +226,7 @@ export default function Settings() {
                       onClick={() => setType('income')}
                       className={`py-2 px-4 rounded-xl border font-medium transition ${
                         type === 'income'
-                          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-650 dark:text-indigo-400'
+                          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                           : 'border-slate-200 dark:border-slate-700 bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900'
                       }`}
                     >
@@ -293,7 +293,7 @@ export default function Settings() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex items-center gap-2 px-5 py-2 bg-indigo-650 hover:bg-indigo-700 text-white rounded-xl font-medium transition disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition disabled:opacity-50"
                 >
                   {submitting ? 'Menyimpan...' : 'Simpan Kategori'}
                 </button>

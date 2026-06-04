@@ -271,23 +271,23 @@ export default function Accounts() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Nama Akun</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase tracking-wider block">Nama Akun</label>
                   <input
                     type="text"
                     placeholder="misal: Bank BCA, Dompet Utama"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Tipe Akun</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase tracking-wider block">Tipe Akun</label>
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary capitalize"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary capitalize"
                   >
                     {accountTypes.map(opt => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -297,19 +297,19 @@ export default function Accounts() {
 
                 {!editingAccount && (
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Saldo Awal (Rp)</label>
+                    <label className="text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase tracking-wider block">Saldo Awal (Rp)</label>
                     <input
                       type="text"
                       placeholder="0"
                       value={formatRupiahInput(balance)}
                       onChange={handleBalanceChange}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl py-2.5 px-4 outline-none focus:border-primary"
                     />
                   </div>
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">Warna Penanda</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase tracking-wider block">Warna Penanda</label>
                   <div className="flex flex-wrap gap-2">
                     {colors.map(c => (
                       <button
