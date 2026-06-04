@@ -30,11 +30,17 @@ const applyBalanceChange = async (transaction, reverse = false, transactionObj =
     sourceAccount.balance = parseFloat(sourceAccount.balance) - (numericAmount * factor);
 
     // Destination Account
-    if (!destination_account_id) throw new Error('Akun tujuan transfer wajib ditentukan.');
-    const destAccount = await Account.findByPk(destination_account_id, { transaction: transactionObj });
-    if (!destAccount) throw new Error('Akun tujuan tidak ditemukan.');
-    destAccount.balance = parseFloat(destAccount.balance) + (numericAmount * factor);
-    await destAccount.save({ transaction: transactionObj });
+    if (destination_account_id) {
+      const destAccount = await Account.findByPk(destination_account_id, { transaction: transactionObj });
+      if (destAccount) {
+        destAccount.balance = parseFloat(destAccount.balance) + (numericAmount * factor);
+        await destAccount.save({ transaction: transactionObj });
+      } else {
+        if (!reverse) throw new Error('Akun tujuan tidak ditemukan.');
+      }
+    } else {
+      if (!reverse) throw new Error('Akun tujuan transfer wajib ditentukan.');
+    }
   }
 
   await sourceAccount.save({ transaction: transactionObj });
