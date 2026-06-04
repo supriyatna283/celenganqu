@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Heart, X, Gift, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Heart, X, Gift, ShieldCheck, ChevronRight, Copy, Check, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 const DonationModal = ({ isOpen, onClose }) => {
   const [selectedAmount, setSelectedAmount] = useState(25000);
   const [customAmount, setCustomAmount] = useState('');
+  const [showPayment, setShowPayment] = useState(false);
+  const [copied, setCopied] = useState(null);
 
   if (!isOpen) return null;
 
@@ -35,9 +37,17 @@ const DonationModal = ({ isOpen, onClose }) => {
       return;
     }
     
-    // In a real app, this would redirect to Midtrans / Saweria / Trakteer
-    // For now we will just show an alert or open a dummy link
-    alert(`Terima kasih banyak atas niat baik Anda untuk mendukung CelenganQu sebesar ${formatRupiah(finalAmount)}! 💚\n\n(Simulasi tombol klik)`);
+    setShowPayment(true);
+  };
+
+  const handleCopy = (text, type) => {
+    navigator.clipboard.writeText(text);
+    setCopied(type);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const handleClose = () => {
+    setShowPayment(false);
     onClose();
   };
 
@@ -55,7 +65,7 @@ const DonationModal = ({ isOpen, onClose }) => {
           <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
           
           <button 
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-4 p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors backdrop-blur-md"
           >
             <X className="w-5 h-5 text-white" />
@@ -73,8 +83,10 @@ const DonationModal = ({ isOpen, onClose }) => {
         </div>
 
         <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-          <div className="mb-6">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 uppercase tracking-wider">Pilih Nominal</h3>
+          {!showPayment ? (
+            <>
+              <div className="mb-6">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 uppercase tracking-wider">Pilih Nominal</h3>
             <div className="grid grid-cols-2 gap-3">
               {amounts.map((amount) => (
                 <button
@@ -128,6 +140,71 @@ const DonationModal = ({ isOpen, onClose }) => {
             <span>Beri Dukungan</span>
             <ChevronRight className="w-5 h-5 opacity-70 group-hover:translate-x-1 transition-transform" />
           </button>
+            </>
+          ) : (
+            <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="mb-6">
+                <button 
+                  onClick={() => setShowPayment(false)}
+                  className="flex items-center space-x-2 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors mb-4"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Kembali</span>
+                </button>
+                <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50 rounded-2xl p-4 flex items-start space-x-3 mb-6 shadow-inner">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0 mt-0.5" />
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    Terima kasih atas niat baik Anda! Silakan transfer <strong className="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-100 dark:bg-emerald-900/50 px-1.5 py-0.5 rounded text-[15px]">{formatRupiah(customAmount ? parseInt(customAmount) : selectedAmount)}</strong> ke salah satu e-Wallet di bawah ini.
+                  </p>
+                </div>
+                
+                <div className="space-y-3">
+                  {/* DANA Card */}
+                  <div className="bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-blue-300 dark:hover:border-blue-700/50 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-[#008CE6]/10 rounded-xl flex items-center justify-center font-bold text-[#008CE6] border border-[#008CE6]/20">DANA</div>
+                      <div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-0.5">E-Wallet DANA</p>
+                        <p className="text-lg font-bold text-slate-900 dark:text-white font-mono tracking-wide">081112300343</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => handleCopy('081112300343', 'dana')}
+                      className={`p-3 rounded-xl transition-all ${copied === 'dana' ? 'bg-[#008CE6] text-white shadow-md shadow-blue-500/20 scale-105' : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300'}`}
+                      title="Salin Nomor DANA"
+                    >
+                      {copied === 'dana' ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                    </button>
+                  </div>
+
+                  {/* GOPAY Card */}
+                  <div className="bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-green-300 dark:hover:border-green-700/50 transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-[#00AED6]/10 rounded-xl flex items-center justify-center font-bold text-[#00AED6] border border-[#00AED6]/20 text-sm">GoPay</div>
+                      <div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-0.5">E-Wallet GoPay</p>
+                        <p className="text-lg font-bold text-slate-900 dark:text-white font-mono tracking-wide">081112300343</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => handleCopy('081112300343', 'gopay')}
+                      className={`p-3 rounded-xl transition-all ${copied === 'gopay' ? 'bg-[#00AED6] text-white shadow-md shadow-[#00AED6]/20 scale-105' : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300'}`}
+                      title="Salin Nomor GoPay"
+                    >
+                      {copied === 'gopay' ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <button
+                onClick={handleClose}
+                className="w-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold py-3.5 px-6 rounded-2xl transition-all shadow-md mt-2 flex items-center justify-center"
+              >
+                Selesai
+              </button>
+            </div>
+          )}
         </div>
       </div>
       
