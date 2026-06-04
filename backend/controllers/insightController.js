@@ -133,42 +133,75 @@ exports.getInsights = async (req, res) => {
         const Groq = require('groq-sdk');
         const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-        const prompt = `Anda adalah 'CelenganQu', asisten perencana keuangan pribadi premium yang cerdas dan bersahabat. Berikut adalah ringkasan keuangan pengguna bulan ini (Bulan: ${month}, Tahun: ${year}):
-- Total Pemasukan: Rp${totalIncome.toLocaleString('id-ID')}
-- Total Pengeluaran: Rp${totalExpense.toLocaleString('id-ID')}
-- Tabungan Bersih: Rp${netSavings.toLocaleString('id-ID')}
-- Rincian Pengeluaran per Kategori: ${JSON.stringify(categorySpendMap)}
-- Anggaran Kategori: ${JSON.stringify(budgets.map(b => ({ category: b.category, limit: parseFloat(b.amount_limit), spent: categorySpendMap[b.category] || 0 })))}
-- Target Tabungan/Tujuan Keuangan: ${JSON.stringify(goals.map(g => ({ name: g.name, target: parseFloat(g.target_amount), current: parseFloat(g.current_amount) })))}
+        const systemPrompt = `Anda adalah "CelenganQu AI", seorang perencana keuangan tersertifikasi (CFP) tingkat atas yang ahli menganalisis arus kas. Anda memberikan saran yang tajam, personal, dan bisa langsung dipraktikkan.
+Gaya bahasa: Ramah, profesional, suportif, dan menggunakan bahasa Indonesia yang sangat natural (tidak kaku).
+Tugas Anda: Analisis data keuangan pengguna dan berikan saran terbaik.
 
-Berdasarkan data di atas, tolong berikan analisis keuangan terperinci dalam format JSON dengan struktur berikut:
+Balas HANYA dalam format JSON berikut (tanpa markdown, tanpa teks lain):
 {
-  "summary_analysis": "analisis singkat ringkasan arus kas keseluruhan dalam 2-3 kalimat hangat dan informatif",
+  "summary_analysis": "Analisis menyeluruh namun ringkas (3-4 kalimat) tentang kondisi arus kas bulan ini. Berikan pujian jika bagus, atau teguran halus yang membangun jika buruk.",
   "insights": [
     {
-      "type": "danger|warning|success|info",
-      "title": "Judul saran/temuan (maksimal 5 kata)",
-      "description": "Penjelasan detail saran finansial konkret (1-2 kalimat) yang ramah dan solutif"
+      "type": "danger", // Gunakan 'danger' untuk peringatan kritis (defisit/overbudget)
+      "title": "Judul Saran 1",
+      "description": "Deskripsi detail yang solutif"
+    },
+    {
+      "type": "warning", // Gunakan 'warning' untuk hal yang perlu diwaspadai
+      "title": "Judul Saran 2",
+      "description": "..."
+    },
+    {
+      "type": "success", // Gunakan 'success' untuk pencapaian baik
+      "title": "Judul Saran 3",
+      "description": "..."
+    },
+    {
+      "type": "info", // Gunakan 'info' untuk saran umum/optimasi
+      "title": "Judul Saran 4",
+      "description": "..."
     }
   ]
-}
-Berikan 3-4 saran yang berkualitas tinggi. Pastikan jenis 'type' sesuai dengan sifat informasi (danger untuk pengeluaran berlebih/defisit, warning untuk mendekati limit/tabungan seret, success untuk pencapaian target/surplus, info untuk informasi umum).
-PENTING: Hanya balas dengan objek JSON mentah yang valid, tanpa pembungkus markdown.`;
+}`;
+
+        const userDataPrompt = `Data Keuangan Bulan Ini (Bulan ${month}/${year}):
+- Pemasukan: Rp${totalIncome.toLocaleString('id-ID')}
+- Pengeluaran: Rp${totalExpense.toLocaleString('id-ID')}
+- Tabungan Bersih: Rp${netSavings.toLocaleString('id-ID')}
+- Rincian Pengeluaran per Kategori: ${JSON.stringify(categorySpendMap)}
+- Anggaran: ${JSON.stringify(budgets.map(b => ({ kategori: b.category, limit: parseFloat(b.amount_limit), terpakai: categorySpendMap[b.category] || 0 })))}
+- Tujuan Tabungan: ${JSON.stringify(goals.map(g => ({ nama: g.name, target: parseFloat(g.target_amount), terkumpul: parseFloat(g.current_amount) })))}
+
+Berikan 4 insight/saran keuangan yang SANGAT CERDAS, spesifik, dan personal berdasarkan angka-angka di atas. Jangan beri saran generik.`;
 
         const chatCompletion = await groq.chat.completions.create({
           messages: [
-            { role: 'user', content: prompt }
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userDataPrompt }
           ],
-          model: 'llama-3.1-8b-instant',
+          model: 'llama-3.3-70b-versatile',
           response_format: { type: 'json_object' }
         });
 
         if (chatCompletion && chatCompletion.choices && chatCompletion.choices.length > 0) {
           const cleanText = chatCompletion.choices[0].message.content;
           const parsed = JSON.parse(cleanText);
-          if (parsed.insights && Array.isArray(parsed.insights)) {
-            finalInsights = parsed.insights;
+          
+          if (parsed.insights && Array.isArray(parsed.insights) && parsed.insights.length > 0) {
+            // Gabungkan insight dari AI dengan alert budget (danger/warning) dari sistem agar tidak hilang
+            const systemCriticalAlerts = fallbackInsights.filter(i => i.type === 'danger' || i.type === 'warning');
+            
+            // Filter AI insights to make sure types are valid and not strictly duplicating system alerts
+            const aiInsights = parsed.insights.map(i => ({
+              type: ['danger', 'warning', 'success', 'info'].includes(i.type) ? i.type : 'info',
+              title: i.title || 'Saran AI',
+              description: i.description || ''
+            })).filter(i => i.description.length > 0);
+
+            // Prioritize system critical alerts at the top, then AI insights
+            finalInsights = [...systemCriticalAlerts, ...aiInsights];
           }
+          
           if (parsed.summary_analysis) {
             aiSummaryAnalysis = parsed.summary_analysis;
           }
