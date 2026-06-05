@@ -11,7 +11,8 @@ import {
   XCircle,
   ToggleLeft,
   ToggleRight,
-  TrendingDown
+  TrendingDown,
+  Zap
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useConfirmStore } from '../store/confirmStore';
@@ -19,7 +20,7 @@ import EmptyState from '../components/EmptyState';
 
 export default function Subscriptions() {
   const { confirm } = useConfirmStore();
-  const { recurrings, fetchRecurrings, toggleRecurring, deleteRecurring, loadingRecurrings, hideNominal } = useFinanceStore();
+  const { recurrings, fetchRecurrings, toggleRecurring, deleteRecurring, payEarlyRecurring, loadingRecurrings, hideNominal } = useFinanceStore();
   
   useEffect(() => {
     fetchRecurrings();
@@ -40,6 +41,18 @@ export default function Subscriptions() {
       try {
         await deleteRecurring(id);
         toast.success('Tagihan rutin dihapus.');
+      } catch (err) {
+        toast.error(err.message);
+      }
+    }
+  };
+
+  const handlePayEarly = async (id) => {
+    const isConfirmed = await confirm('Konfirmasi Tindakan', 'Bayar tagihan ini lebih awal? Transaksi akan langsung dicatat dan jadwal akan dimajukan ke periode berikutnya.');
+    if (isConfirmed) {
+      try {
+        await payEarlyRecurring(id);
+        toast.success('Tagihan berhasil dibayar lebih awal.');
       } catch (err) {
         toast.error(err.message);
       }
@@ -154,6 +167,15 @@ export default function Subscriptions() {
                     </div>
                     
                     <div className="flex items-center space-x-2 border-l border-slate-200 dark:border-slate-800 pl-6">
+                      {r.is_active && (
+                        <button 
+                          onClick={() => handlePayEarly(r.id)}
+                          className="p-2 rounded-lg transition-colors text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50"
+                          title="Bayar Lebih Awal"
+                        >
+                          <Zap className="w-5 h-5" />
+                        </button>
+                      )}
                       <button 
                         onClick={() => handleToggle(r.id)}
                         className={`p-2 rounded-lg transition-colors ${r.is_active ? 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50' : 'text-slate-400 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700'}`}

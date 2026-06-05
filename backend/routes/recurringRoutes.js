@@ -9,5 +9,6 @@ router.get('/', recurringController.getRecurringTemplates);
 router.post('/', recurringController.createRecurringTemplate);
 router.delete('/:id', recurringController.deleteRecurringTemplate);
 router.patch('/:id/toggle', recurringController.toggleRecurringTemplate);
+router.post('/:id/pay-early', recurringController.payEarlyRecurringTemplate);
 
 module.exports = router;

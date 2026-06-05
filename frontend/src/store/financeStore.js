@@ -251,7 +251,24 @@ export const useFinanceStore = create((set, get) => ({
       return response.data;
     } catch (err) {
       console.error(err);
-      throw new Error(err.response?.data?.message || 'Gagal membuat tagihan rutin.');
+      throw new Error(err.response?.data?.message || 'Gagal membuat rencana rutin.');
+    }
+  },
+
+  payEarlyRecurring: async (id) => {
+    try {
+      const response = await api.post(`/recurring/${id}/pay-early`);
+      set((state) => ({
+        recurrings: state.recurrings.map((r) => r.id === id ? response.data : r)
+      }));
+      get().fetchAccounts();
+      get().fetchTransactions();
+      get().fetchBudgets();
+      get().fetchInsights();
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      throw new Error(err.response?.data?.message || 'Gagal membayar lebih awal.');
     }
   },
 
